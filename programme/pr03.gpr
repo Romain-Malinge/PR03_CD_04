@@ -1,0 +1,8 @@
+project Pr03 is
+
+   for Source_Dirs use ("./**");
+   for Object_Dir use "obj";
+   for Main use ("exemple_adresse_ip.adb", "exemple_fichiers.adb", "routeur.adb");
+
+end Pr03;
+
