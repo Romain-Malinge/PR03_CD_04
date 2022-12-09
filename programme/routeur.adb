@@ -63,7 +63,6 @@ begin
      Nbr_Ajoute := 0;
 
      -- Traiter les arguments de la ligne de commande
-
      for a in 1..Argument_Count loop
 
           -- Traiter l'argument a de la ligne de commande
@@ -80,23 +79,16 @@ begin
 
           -- Traiter les exceptions
 
-          if Argument_Counte < 1 then
-
+          if Taille_Cache < 1 then
                raise Taille_Cache_Error;
-
           elsif txt_present(Nom_Paquet) then
-
                raise Not_Txt_Error;
-
           elsif txt_present(Nom_Table) then
-
                raise Not_Txt_Error;
-
           elsif txt_present(Nom_Cache) then
-
                raise Not_Txt_Error;
           end if;
 
-
+     end loop;
 
 end;
