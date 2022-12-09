@@ -70,17 +70,11 @@ begin
 
           case Argument(a) is
                when +"-c" => Taille_Cache := Argument(a+1);
-
                when +"-P" => Politique := Argument(a+1);
-
                when +"-S" => Bavard := False;
-
                when +"-p" => Nom_Paquet := Argument(a+1);
-
                when +"-t" => Nom_Table := Argument(a+1);
-
                when +"-r" => Nom_Resultat := Argument(a+1);
-
                when others => null;
           end case;
 
