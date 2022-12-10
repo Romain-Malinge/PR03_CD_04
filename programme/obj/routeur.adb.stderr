@@ -1,0 +1,18 @@
+routeur.adb:35:26: error: array type required in indexed component
+routeur.adb:35:51: error: array type required in indexed component
+routeur.adb:35:78: error: array type required in indexed component
+routeur.adb:35:105: error: array type required in indexed component
+routeur.adb:49:19: error: "Interger" is undefined
+routeur.adb:49:19: error: possible misspelling of "Integer"
+routeur.adb:56:20: error: expected private type "Ada.Strings.Unbounded.Unbounded_String"
+routeur.adb:56:20: error: found a string type
+routeur.adb:57:19: error: expected private type "Ada.Strings.Unbounded.Unbounded_String"
+routeur.adb:57:19: error: found a string type
+routeur.adb:58:22: error: expected private type "Ada.Strings.Unbounded.Unbounded_String"
+routeur.adb:58:22: error: found a string type
+routeur.adb:62:13: error: "Faux" is undefined
+routeur.adb:70:16: error: expected a discrete type
+routeur.adb:70:16: error: found type "Standard.String"
+routeur.adb:83:22: error: "Taille_Cache_Error" is undefined
+routeur.adb:85:22: error: "Not_Txt_Error" is undefined (more references follow)
+routeur.adb:88:29: error: "Nom_Cache" is undefined
