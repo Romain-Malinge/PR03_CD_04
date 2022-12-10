@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <Locations >
-  <Project>
-    <vfs_file>C:\Users\romai\Desktop\PR03_CD_04\programme\pr03.gpr</vfs_file>
+  <Project >
     <file_marker column=" 36" line=" 102" >
       <vfs_project>C:\Users\romai\Desktop\PR03_CD_04\programme\pr03.gpr</vfs_project>
       <vfs_file>C:\Users\romai\Desktop\PR03_CD_04\programme\routeur.adb</vfs_file>
@@ -18,9 +17,21 @@
       <vfs_project>C:\Users\romai\Desktop\PR03_CD_04\programme\pr03.gpr</vfs_project>
       <vfs_file>C:\Users\romai\Desktop\PR03_CD_04\programme\exemple_fichiers.adb</vfs_file>
     </file_marker>
-    <file_marker current="true" column=" 28" line=" 46" >
+    <file_marker column=" 28" line=" 46" >
       <vfs_project>C:\Users\romai\Desktop\PR03_CD_04\programme\pr03.gpr</vfs_project>
       <vfs_file>C:\Users\romai\Desktop\PR03_CD_04\programme\lca_ip.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project>C:\Users\romai\Desktop\PR03_CD_04\programme\pr03.gpr</vfs_project>
+      <vfs_file>C:\Users\romai\Desktop\PR03_CD_04\programme\routeur_exceptions.ads</vfs_file>
+    </file_marker>
+    <file_marker column=" 14" line=" 157" >
+      <vfs_project>C:\Users\romai\Desktop\PR03_CD_04\programme\pr03.gpr</vfs_project>
+      <vfs_file>C:\Users\romai\Desktop\PR03_CD_04\programme\routeur.adb</vfs_file>
+    </file_marker>
+    <file_marker current="true" column=" 12" line=" 146" >
+      <vfs_project>C:\Users\romai\Desktop\PR03_CD_04\programme\pr03.gpr</vfs_project>
+      <vfs_file>C:\Users\romai\Desktop\PR03_CD_04\programme\routeur.adb</vfs_file>
     </file_marker>
   </Project>
 </Locations>
