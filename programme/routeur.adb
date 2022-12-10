@@ -5,21 +5,25 @@ with Ada.Strings.Unbounded;     use Ada.Strings.Unbounded;
 with Ada.Text_IO.Unbounded_IO;  use Ada.Text_IO.Unbounded_IO;
 with Ada.Command_Line;          use Ada.Command_Line;
 with Ada.Exceptions;            use Ada.Exceptions;	-- pour Exception_Message
-with LCA_IP; use LCA_IP;
+with LCA_IP;                    use LCA_IP;
+with Routeur_Exceptions;        use Routeur_Exceptions;
 
 
 procedure Routeur is
 
-    ------------------ Définition des types secondaires
+    ------------------------- Définition des constant --------------------------
 
     UN_OCTET : constant T_Adresse_IP := 2 ** 8;
-    type E_Politique is (FIFO,LRU,LFU);
 
 
-    ------------------ Espace pour les sous-programmes
+    --------------------- Espace pour les sous-programmes ----------------------
 
-    --
-    procedure Set_IP (IP : in out T_Adresse_IP; N1 : Integer; N2 : Integer; N3 : Integer; N4 : Integer) is
+    -- Initialiser une adresse IP
+    procedure Set_IP (IP : in out T_Adresse_IP;
+                      N1 : T_Adresse_IP;
+                      N2 : T_Adresse_IP;
+                      N3 : T_Adresse_IP;
+                      N4 : T_Adresse_IP) is
     begin
         IP := N1;
         IP := IP * UN_OCTET + N2;
@@ -27,6 +31,30 @@ procedure Routeur is
         IP := IP * UN_OCTET + N4;
     end Set_IP;
 
+    -- Afficher une adresse IP
+    procedure Afficher_IP (IP : in T_Adresse_IP) is
+    begin
+    Put (Natural ((IP / UN_OCTET ** 3) mod UN_OCTET), 1); Put (".");
+    Put (Natural ((IP / UN_OCTET ** 2) mod UN_OCTET), 1); Put (".");
+    Put (Natural ((IP / UN_OCTET ** 1) mod UN_OCTET), 1); Put (".");
+    Put (Natural  (IP mod UN_OCTET), 1);
+    end Afficher_IP;
+
+    -- Afficher une cellule de Lca.
+    procedure Afficher (D : in T_Adresse_IP;
+                        M : in T_Adresse_IP;
+                        P : in Unbounded_String;
+                        F : in Integer) is
+    begin
+        Afficher_IP(D); Put("    ");
+        Afficher_IP(D); Put("    ");
+        Put(P); Put("        ");
+        Put_Line(F'Image);
+    end Afficher;
+
+    -- Afficher une Lca.
+    procedure Afficher_Lca is
+            new Pour_Chaque (Afficher);
 
     -- Transformer un String en un Unbounded_String
     function "+" (Item : in String) return Unbounded_String
@@ -44,63 +72,98 @@ procedure Routeur is
         if Taille < 4 then
             return False;
         else
-            return ( (Mot(Taille) = +"t") and (Mot(Taille-1) = +"x") and (Mot(Taille-2) = +"t") and (Mot(Taille-3) = +".") );
+            null;
+            return (To_String(Mot)(Taille) = 't' and
+                    To_String(Mot)(Taille-1) = 'x' and
+                    To_String(Mot)(Taille-2) = 't' and
+                    To_String(Mot)(Taille-3) = '.');
         end if;
     end txt_present;
 
-    ------------------ Variables globales du programme
 
+
+    --------------------- Variables globales du programme ----------------------
+
+    Table : T_LCA_IP;
+    IP_Teste : T_Adresse_IP;
     Paquet : File_Type;
     Nom_Paquet : Unbounded_String;
     Nom_Table : Unbounded_String;
     Nom_Resultat : Unbounded_String;
     Taille_Cache : Integer;
-    Politique : E_Politique;
+    Politique : Unbounded_String;
     Fin : Boolean;
     Bavard : Boolean;
-    Nbr_Ajoute : Interger;
+    Nbr_Ajoute : Integer;
 
 
 begin
 
     -- Initialisation des variables
-
-    Nom_Paquet := "paquet.txt";
-    Nom_Table := "table.txt";
-    Nom_Resultat := "resultats.txt";
+    Nom_Paquet := +"paquet.txt";
+    Nom_Table := +"table.txt";
+    Nom_Resultat := +"resultats.txt";
     Taille_Cache := 10;
-    Politique := FIFO;
+    Politique := +"FIFO";
     Bavard := True;
-    Fin := Faux;
+    Fin := False;
     Nbr_Ajoute := 0;
+
 
     -- Traiter les arguments de la ligne de commande
     for a in 1..Argument_Count loop
-
-        -- Traiter l'argument a de la ligne de commande
-
-        case Argument(a) is
-            when +"-c" => Taille_Cache := Argument(a+1);
-            when +"-P" => Politique := Argument(a+1);
-            when +"-S" => Bavard := False;
-            when +"-p" => Nom_Paquet := Argument(a+1);
-            when +"-t" => Nom_Table := Argument(a+1);
-            when +"-r" => Nom_Resultat := Argument(a+1);
-            when others => null;
-        end case;
-
-        -- Traiter les exceptions
-
-        if Taille_Cache < 1 then
-            raise Taille_Cache_Error;
-        elsif txt_present(Nom_Paquet) then
-            raise Not_Txt_Error;
-        elsif txt_present(Nom_Table) then
-            raise Not_Txt_Error;
-        elsif txt_present(Nom_Cache) then
-            raise Not_Txt_Error;
+        -- Traiter le a éme argument de la ligne de commande
+        if Argument(a)(1) = '-' then
+            case Argument(a)(2) is
+                when 'c' => Taille_Cache := Integer'Value (Argument(a+1));
+                when 'P' => Politique := +Argument(a+1);
+                when 'S' => Bavard := False;
+                when 'p' => Nom_Paquet := +Argument(a+1);
+                when 't' => Nom_Table := +Argument(a+1);
+                when 'r' => Nom_Resultat := +Argument(a+1);
+                when others => null;
+            end case;
+        else
+            null;
         end if;
-
     end loop;
 
-end;
+
+    -- Traiter les exceptions
+    if Taille_Cache < 1 then
+        raise Taille_Cache_Exception;
+    elsif not txt_present(Nom_Paquet) then
+        raise Not_Txt_Exception;
+    elsif not txt_present(Nom_Table) then
+        raise Not_Txt_Exception;
+    elsif not txt_present(Nom_Resultat) then
+        raise Not_Txt_Exception;
+    end if;
+
+
+    -- Teste temporaire de Lca
+    Initialiser (Table);
+    Set_IP(IP_Teste, 110, 120, 130, 140);
+    Enregistrer(Table, IP_Teste, IP_Teste, +"port1", 1000);
+    Set_IP(IP_Teste, 150, 160, 170, 180);
+    Enregistrer(Table, IP_Teste, IP_Teste, +"port2", 1000);
+    New_Line;
+    Put_line ("Destination        Masque             Interface     Fréquence");
+    Afficher_Lca(Table);
+    Vider(Table);
+    if Est_Vide(Table) then
+        Put_Line ("La table est bien vide !");
+    end if;
+    New_Line;
+
+
+exception
+    when Taille_Cache_Exception =>
+        Put_Line("La taille du cache doit être <1");
+    when Not_Txt_Exception =>
+        Put_Line("Les noms de fichiers doivent finir par .txt");
+    when others =>
+        null;
+
+end Routeur;
+

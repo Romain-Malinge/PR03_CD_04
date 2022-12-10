@@ -2,7 +2,7 @@ project Pr03 is
 
    for Source_Dirs use ("./**");
    for Object_Dir use "obj";
-   for Main use ("exemple_adresse_ip.adb", "exemple_fichiers.adb", "lca_ip.adb", "lca_ip.ads", "routeur.adb", "sda_exceptions.ads", "test_lca.adb");
+   for Main use ("exemple_adresse_ip.adb", "exemple_fichiers.adb", "lca_ip.adb", "routeur.adb");
 
 end Pr03;
 

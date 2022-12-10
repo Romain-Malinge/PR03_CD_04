@@ -1,5 +1,5 @@
 with Ada.Text_IO;            use Ada.Text_IO;
-with Sda_Exceptions;         use Sda_Exceptions;
+with Routeur_Exceptions;     use Routeur_Exceptions;
 with Ada.Unchecked_Deallocation;
 
 package body LCA_IP is
