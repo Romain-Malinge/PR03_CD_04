@@ -1,1 +1,0 @@
-routeur.adb:145:12: warning: "IP_Teste" may be referenced before it has a value [enabled by default]
