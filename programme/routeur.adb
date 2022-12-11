@@ -34,20 +34,20 @@ procedure Routeur is
     -- Afficher une adresse IP
     procedure Afficher_IP (IP : in T_Adresse_IP) is
     begin
-    Put (Natural ((IP / UN_OCTET ** 3) mod UN_OCTET), 1); Put (".");
-    Put (Natural ((IP / UN_OCTET ** 2) mod UN_OCTET), 1); Put (".");
-    Put (Natural ((IP / UN_OCTET ** 1) mod UN_OCTET), 1); Put (".");
-    Put (Natural  (IP mod UN_OCTET), 1);
+    Put (Natural ((IP / UN_OCTET ** 3) mod UN_OCTET), 3); Put (".");
+    Put (Natural ((IP / UN_OCTET ** 2) mod UN_OCTET), 3); Put (".");
+    Put (Natural ((IP / UN_OCTET ** 1) mod UN_OCTET), 3); Put (".");
+    Put (Natural  (IP mod UN_OCTET), 3);
     end Afficher_IP;
 
-    -- Afficher une cellule de Lca.
+    -- Afficher une cellule de Lca
     procedure Afficher (D : in T_Adresse_IP;
                         M : in T_Adresse_IP;
                         P : in Unbounded_String;
                         F : in Integer) is
     begin
-        Afficher_IP(D); Put("    ");
-        Afficher_IP(D); Put("    ");
+        Afficher_IP(D); Put("     ");
+        Afficher_IP(D); Put("     ");
         Put(P); Put("        ");
         Put_Line(F'Image);
     end Afficher;
@@ -55,6 +55,48 @@ procedure Routeur is
     -- Afficher une Lca.
     procedure Afficher_Lca is
             new Pour_Chaque (Afficher);
+
+
+    -- Afficher une Lca avec des titres.
+    procedure Afficher_Lca_Titre (Table : in T_LCA_IP) is
+    begin
+        New_Line;
+        Put_line ("Destination         Masque              Interface    Fréquence");
+        Afficher_Lca (Table);
+        New_Line;
+    end Afficher_Lca_Titre;
+
+    -- Afficher les paramettres du programmes
+    procedure Afficher_Parrametres (Nom_Paquet : Unbounded_String;
+                                    Nom_Table : Unbounded_String;
+                                    Nom_Resultat : Unbounded_String;
+                                    Taille_Cache : Integer;
+                                    Politique : Unbounded_String;
+                                    Bavard : Boolean) is
+    begin
+        New_Line;
+        Put_Line ("--------------------- PARRAMETRES ---------------------");
+        Put ("Politique du Cache: ");
+        Put (Politique);
+        if not (Politique = "FIFO") then
+            Put (" ");
+        else
+            null;
+        end if;
+        Put ("   |  Paquet: ");
+        Put_Line(Nom_Paquet);
+        Put ("Taille du Cache:"); Put (Taille_Cache, 4);
+        Put ("       |  Table: "); Put_Line(Nom_Table);
+        Put ("Bavard: ");
+        if Bavard then
+            Put ("oui");
+        else
+            Put ("non");
+        end if;
+        Put ("                |  Résultat: "); Put_Line(Nom_Resultat);
+        New_Line;
+    end Afficher_Parrametres;
+
 
     -- Transformer un String en un Unbounded_String
     function "+" (Item : in String) return Unbounded_String
@@ -79,7 +121,6 @@ procedure Routeur is
                     To_String(Mot)(Taille-3) = '.');
         end if;
     end txt_present;
-
 
 
     --------------------- Variables globales du programme ----------------------
@@ -132,29 +173,32 @@ begin
     -- Traiter les exceptions
     if Taille_Cache < 1 then
         raise Taille_Cache_Exception;
+
     elsif not txt_present(Nom_Paquet) then
         raise Not_Txt_Exception;
+
     elsif not txt_present(Nom_Table) then
         raise Not_Txt_Exception;
+
     elsif not txt_present(Nom_Resultat) then
         raise Not_Txt_Exception;
-    end if;
 
+    elsif (Politique /= "FIFO" and Politique /= "LRU" and Politique/= "LFU") then
+        raise Not_Politique_Exception;
+    end if;
 
     -- Teste temporaire de Lca
     Initialiser (Table);
     Set_IP(IP_Teste, 110, 120, 130, 140);
-    Enregistrer(Table, IP_Teste, IP_Teste, +"port1", 1000);
+    Enregistrer(Table, IP_Teste, IP_Teste, +"eth1", 1000);
     Set_IP(IP_Teste, 150, 160, 170, 180);
-    Enregistrer(Table, IP_Teste, IP_Teste, +"port2", 1000);
-    New_Line;
-    Put_line ("Destination        Masque             Interface     Fréquence");
-    Afficher_Lca(Table);
+    Enregistrer(Table, IP_Teste, IP_Teste, +"eth0", 1000);
+    -- Afficher_Lca_Titre(Table);
     Vider(Table);
-    if Est_Vide(Table) then
-        Put_Line ("La table est bien vide !");
-    end if;
-    New_Line;
+
+    -- Commande: .\routeur -P LFU -c 999 -S -p de_bonbon.txt -t basse.txt -r des_courses.txt
+    Afficher_Parrametres (Nom_Paquet, Nom_Table, Nom_Resultat,
+                          Taille_Cache, Politique, Bavard);
 
 
 exception
@@ -162,6 +206,8 @@ exception
         Put_Line("La taille du cache doit être <1");
     when Not_Txt_Exception =>
         Put_Line("Les noms de fichiers doivent finir par .txt");
+    when Not_Politique_Exception =>
+        Put_Line("La politique n'est pas valide, les politique acceptées sont FIFO, LRU et LFU");
     when others =>
         null;
 

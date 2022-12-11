@@ -1,0 +1,21 @@
+[GENERATED OBJECT FILE]
+b__routeur.o
+[PROJECT FILES]
+C:\Users\romai\Desktop\PR03_CD_04\programme\pr03.gpr
+20221211153628 d8456cea335d0d77b75a2404d1f1893b
+[BOUND OBJECT FILES]
+C:\Users\romai\Desktop\PR03_CD_04\programme\obj\routeur_exceptions.o
+C:\Users\romai\Desktop\PR03_CD_04\programme\obj\lca_ip.o
+C:\Users\romai\Desktop\PR03_CD_04\programme\obj\routeur.o
+[GENERATED SOURCE FILES]
+b__routeur.ads
+b__routeur.adb
+b__routeur.ali
+[RESULTING OPTIONS]
+-LC:\Users\romai\Desktop\PR03_CD_04\programme\obj\
+-LC:\Users\romai\Desktop\PR03_CD_04\programme\obj\
+-LC:/gnat/2021/lib/gcc/x86_64-w64-mingw32/10.3.1/adalib/
+-static
+-static-libgcc
+C:/gnat/2021/lib/gcc/x86_64-w64-mingw32/10.3.1/adalib/libgnat.a
+-Wl,--stack=0x2000000

@@ -1,0 +1,1 @@
+teste_lca.adb:68:12: warning: "IP_Teste" may be referenced before it has a value [enabled by default]
