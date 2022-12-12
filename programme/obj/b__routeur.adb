@@ -38,6 +38,7 @@ package body ada_main is
    E171 : Short_Integer; pragma Import (Ada, E171, "system__pool_global_E");
    E161 : Short_Integer; pragma Import (Ada, E161, "routeur_exceptions_E");
    E160 : Short_Integer; pragma Import (Ada, E160, "lca_ip_E");
+   E175 : Short_Integer; pragma Import (Ada, E175, "routeur_functions_E");
 
    Sec_Default_Sized_Stacks : array (1 .. 1) of aliased System.Secondary_Stack.SS_Stack (System.Parameters.Runtime_Default_Sec_Stack_Size);
 
@@ -261,6 +262,7 @@ package body ada_main is
       E161 := E161 + 1;
       LCA_IP'ELAB_SPEC;
       E160 := E160 + 1;
+      E175 := E175 + 1;
    end adainit;
 
    procedure Ada_Main_Program;
@@ -300,6 +302,7 @@ package body ada_main is
 --  BEGIN Object file/option list
    --   C:\Users\romai\Desktop\PR03_CD_04\programme\obj\routeur_exceptions.o
    --   C:\Users\romai\Desktop\PR03_CD_04\programme\obj\lca_ip.o
+   --   C:\Users\romai\Desktop\PR03_CD_04\programme\obj\routeur_functions.o
    --   C:\Users\romai\Desktop\PR03_CD_04\programme\obj\routeur.o
    --   -LC:\Users\romai\Desktop\PR03_CD_04\programme\obj\
    --   -LC:\Users\romai\Desktop\PR03_CD_04\programme\obj\

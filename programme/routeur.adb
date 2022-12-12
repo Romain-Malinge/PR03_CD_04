@@ -7,55 +7,16 @@ with Ada.Command_Line;          use Ada.Command_Line;
 with Ada.Exceptions;            use Ada.Exceptions;	-- pour Exception_Message
 with LCA_IP;                    use LCA_IP;
 with Routeur_Exceptions;        use Routeur_Exceptions;
+with Routeur_Functions;         use Routeur_Functions;
 
 
 procedure Routeur is
 
-    ------------------------- Définition des constant --------------------------
-
-    UN_OCTET : constant T_Adresse_IP := 2 ** 8;
-
-
-    --------------------- Espace pour les sous-programmes ----------------------
-
-    -- Initialiser une adresse IP
-    procedure Set_IP (IP : in out T_Adresse_IP;
-                      N1 : T_Adresse_IP;
-                      N2 : T_Adresse_IP;
-                      N3 : T_Adresse_IP;
-                      N4 : T_Adresse_IP) is
-    begin
-        IP := N1;
-        IP := IP * UN_OCTET + N2;
-        IP := IP * UN_OCTET + N3;
-        IP := IP * UN_OCTET + N4;
-    end Set_IP;
-
-    -- Afficher une adresse IP
-    procedure Afficher_IP (IP : in T_Adresse_IP) is
-    begin
-    Put (Natural ((IP / UN_OCTET ** 3) mod UN_OCTET), 3); Put (".");
-    Put (Natural ((IP / UN_OCTET ** 2) mod UN_OCTET), 3); Put (".");
-    Put (Natural ((IP / UN_OCTET ** 1) mod UN_OCTET), 3); Put (".");
-    Put (Natural  (IP mod UN_OCTET), 3);
-    end Afficher_IP;
-
-    -- Afficher une cellule de Lca
-    procedure Afficher (D : in T_Adresse_IP;
-                        M : in T_Adresse_IP;
-                        P : in Unbounded_String;
-                        F : in Integer) is
-    begin
-        Afficher_IP(D); Put("     ");
-        Afficher_IP(D); Put("     ");
-        Put(P); Put("        ");
-        Put_Line(F'Image);
-    end Afficher;
+    ------------------------------- PROCEDURES ---------------------------------
 
     -- Afficher une Lca.
     procedure Afficher_Lca is
-            new Pour_Chaque (Afficher);
-
+            new Pour_Chaque (Afficher_Cellule);
 
     -- Afficher une Lca avec des titres.
     procedure Afficher_Lca_Titre (Lca : in T_LCA_IP; Titre : Unbounded_String) is
@@ -67,67 +28,20 @@ procedure Routeur is
         New_Line;
     end Afficher_Lca_Titre;
 
-    -- Afficher les paramettres du programmes
-    procedure Afficher_Parrametres (Nom_Paquet : Unbounded_String;
-                                    Nom_Table : Unbounded_String;
-                                    Nom_Resultat : Unbounded_String;
-                                    Taille_Cache : Integer;
-                                    Politique : Unbounded_String;
-                                    Bavard : Boolean) is
-    begin
-        New_Line;
-        Put_Line ("--------------------- PARRAMETRES ---------------------");
-        Put ("Politique du Cache: ");
-        Put (Politique);
-        if not (Politique = "FIFO") then
-            Put (" ");
-        else
-            null;
-        end if;
-        Put ("   |  Paquet: ");
-        Put_Line(Nom_Paquet);
-        Put ("Taille du Cache:"); Put (Taille_Cache, 4);
-        Put ("       |  Table: "); Put_Line(Nom_Table);
-        Put ("Bavard: ");
-        if Bavard then
-            Put ("oui");
-        else
-            Put ("non");
-        end if;
-        Put ("                |  Résultat: "); Put_Line(Nom_Resultat);
-        New_Line;
-    end Afficher_Parrametres;
-
-
     -- Transformer un String en un Unbounded_String
     function "+" (Item : in String) return Unbounded_String
-                   renames To_Unbounded_String;
+                  renames To_Unbounded_String;
 
     -- Transformer un Unbounded_String en un String
     function "-" (Item : in Unbounded_String) return String
-                   renames To_String;
-
-    -- Vérifier que le motif .txt est dans un Unbounded_String
-    function txt_present (Mot : in Unbounded_String) return Boolean is
-        Taille : Integer;
-    begin
-        Taille := Length(Mot);
-        if Taille < 4 then
-            return False;
-        else
-            null;
-            return (To_String(Mot)(Taille) = 't' and
-                    To_String(Mot)(Taille-1) = 'x' and
-                    To_String(Mot)(Taille-2) = 't' and
-                    To_String(Mot)(Taille-3) = '.');
-        end if;
-    end txt_present;
+                  renames To_String;
 
 
     --------------------- Variables globales du programme ----------------------
 
     Table : T_LCA_IP;
-    IP_Teste : T_Adresse_IP;
+    IP : LCA_IP.T_Adresse_IP;
+    N1, N2, N3, N4 : LCA_IP.T_Adresse_IP;
     Paquet : File_Type;
     Nom_Paquet : Unbounded_String;
     Nom_Table : Unbounded_String;
@@ -171,6 +85,10 @@ begin
     end loop;
 
 
+
+
+
+
     -- Traiter les exceptions
     if Taille_Cache < 1 then
         raise Taille_Cache_Exception;
@@ -190,10 +108,12 @@ begin
 
     -- Teste temporaire de Lca
     Initialiser (Table);
-    Set_IP(IP_Teste, 110, 120, 130, 140);
-    Enregistrer(Table, IP_Teste, IP_Teste, +"eth1", 1000);
-    Set_IP(IP_Teste, 150, 160, 170, 180);
-    Enregistrer(Table, IP_Teste, IP_Teste, +"eth0", 1000);
+    N1 := 110; N2 := 120; N3 := 130; N4 := 140;
+    Set_IP(IP, N1, N2, N3, N4);
+    Enregistrer(Table, IP, IP, +"eth1", 1000);
+    N1 := 150; N2 := 160; N3 := 170; N4 := 180;
+    Set_IP(IP, N1, N2, N3, N4);
+    Enregistrer(Table, IP, IP, +"eth0", 1000);
     Afficher_Lca_Titre(Table, +"Cache");
     Vider(Table);
 
