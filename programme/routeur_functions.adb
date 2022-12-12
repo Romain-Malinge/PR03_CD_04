@@ -22,6 +22,8 @@ package body Routeur_Functions is
                       N3 : in out LCA_IP.T_Adresse_IP;
                       N4 : in out LCA_IP.T_Adresse_IP) is
     begin
+
+        N1 := 00000111;
         IP := N1;
         IP := IP * UN_OCTET + N2;
         IP := IP * UN_OCTET + N3;

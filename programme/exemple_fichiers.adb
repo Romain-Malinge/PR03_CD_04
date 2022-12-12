@@ -5,6 +5,7 @@ with Ada.Strings.Unbounded;     use Ada.Strings.Unbounded;
 with Ada.Text_IO.Unbounded_IO;  use Ada.Text_IO.Unbounded_IO;
 with Ada.Command_Line;          use Ada.Command_Line;
 with Ada.Exceptions;            use Ada.Exceptions;	-- pour Exception_Message
+with LCA_IP;                    use LCA_IP;
 
 
 -- Illustration de la lecture et de l'écriture de fichiers.
@@ -15,7 +16,7 @@ with Ada.Exceptions;            use Ada.Exceptions;	-- pour Exception_Message
 procedure Exemple_Fichiers is
 	Nom_Sortie : Unbounded_String;
 	Nom_Entree : Unbounded_String;
-	Valeur : Integer;
+	Valeur : T_Adresse_IP;
 	Texte : Unbounded_String;
 	Somme : Integer;
 	Numero_Ligne : Integer;

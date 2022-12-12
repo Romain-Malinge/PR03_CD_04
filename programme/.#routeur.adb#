@@ -38,11 +38,13 @@ procedure Routeur is
 
 
     --------------------- Variables globales du programme ----------------------
-    Ficher : File_Type;
+    F_Table : File_Type;
+    F_Paquet : File_Type;
+    F_Résultat : File_Type;
     Table : T_LCA_IP;
     IP : LCA_IP.T_Adresse_IP;
     N1, N2, N3, N4 : Integer;
-    Paquet : File_Type;
+
     Nom_Paquet : Unbounded_String;
     Nom_Table : Unbounded_String;
     Nom_Resultat : Unbounded_String;
