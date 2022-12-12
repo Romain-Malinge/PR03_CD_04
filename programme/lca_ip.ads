@@ -55,10 +55,11 @@ package LCA_IP is
 
     -- Appliquer un traitement (Traiter) pour chaque quadruplet d'une Lca.
     generic
-        with procedure Traiter (Destination : in T_Adresse_IP;
-                                Masque : in T_Adresse_IP;
-                                Port : in Unbounded_String;
-                                Frequence : in Integer);
+        with procedure Traiter (Destination : in out T_Adresse_IP;
+                                Masque : in out T_Adresse_IP;
+                                Port : in out Unbounded_String;
+                                Frequence : in out Integer);
+    
     procedure Pour_Chaque (Lca : in T_LCA_IP);
 
 

@@ -1,3 +1,11 @@
+with Ada.Strings;               use Ada.Strings;	-- pour Both utilisÃ© par Trim
+with Ada.Text_IO;               use Ada.Text_IO;
+with Ada.Integer_Text_IO;       use Ada.Integer_Text_IO;
+with Ada.Strings.Unbounded;     use Ada.Strings.Unbounded;
+with Ada.Text_IO.Unbounded_IO;  use Ada.Text_IO.Unbounded_IO;
+with Ada.Command_Line;          use Ada.Command_Line;
+with Ada.Exceptions;            use Ada.Exceptions;	-- pour Exception_Message
+
 with Ada.Strings.Unbounded;     use Ada.Strings.Unbounded;
 with LCA_IP;                    use LCA_IP;
 
@@ -6,14 +14,14 @@ package Routeur_Functions is
 
     -- Initialiser une adresse IP
     procedure Set_IP (IP : in out LCA_IP.T_Adresse_IP;
-                      N1 : in out LCA_IP.T_Adresse_IP;
-                      N2 : in out LCA_IP.T_Adresse_IP;
-                      N3 : in out LCA_IP.T_Adresse_IP;
-                      N4 : in out LCA_IP.T_Adresse_IP);
+                      N1 : in LCA_IP.T_Adresse_IP;
+                      N2 : in LCA_IP.T_Adresse_IP;
+                      N3 : in LCA_IP.T_Adresse_IP;
+                      N4 : in LCA_IP.T_Adresse_IP);
 
 
     -- Afficher une adresse IP
-    procedure Afficher_IP (IP : in LCA_IP.T_Adresse_IP);
+    procedure Put_IP (IP : in LCA_IP.T_Adresse_IP; Largeur : Integer);
 
 
     -- Afficher les paramettres du programmes
@@ -22,18 +30,26 @@ package Routeur_Functions is
                                     Nom_Resultat : Unbounded_String;
                                     Taille_Cache : Integer;
                                     Politique : Unbounded_String;
-                                    Bavard : Boolean);
+                                    Nbr_Ajoute : Integer);
 
 
     -- Afficher une cellule de Lca
-    procedure Afficher_Cellule (D : in LCA_IP.T_Adresse_IP;
-                                M : in LCA_IP.T_Adresse_IP;
-                                P : in Unbounded_String;
-                                F : in Integer);
+    procedure Afficher_Cellule (D : in out LCA_IP.T_Adresse_IP;
+                                M : in out LCA_IP.T_Adresse_IP;
+                                P : in out Unbounded_String;
+                                F : in out Integer);
 
 
     -- Vérifier que le motif .txt est dans un Unbounded_String
     function txt_present (Mot : in Unbounded_String) return Boolean;
+
+
+    -- Consomme les carractères d'un fichier pour en faire une Adresse IP
+    procedure Get_IP (Fichier : in out File_type; IP : in out T_Adresse_IP);
+
+
+    -- Transforme une IP sous forme de chaine de carractère en T_Adresse_IP
+    procedure To_Adresse_IP (Texte : Unbounded_String; IP : in out T_Adresse_IP);
 
 
 end Routeur_Functions;

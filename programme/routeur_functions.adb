@@ -1,4 +1,3 @@
-with Ada.Strings;               use Ada.Strings;	-- pour Both utilisé par Trim
 with Ada.Text_IO;               use Ada.Text_IO;
 with Ada.Integer_Text_IO;       use Ada.Integer_Text_IO;
 with Ada.Strings.Unbounded;     use Ada.Strings.Unbounded;
@@ -17,13 +16,11 @@ package body Routeur_Functions is
 
 
     procedure Set_IP (IP : in out LCA_IP.T_Adresse_IP;
-                      N1 : in out LCA_IP.T_Adresse_IP;
-                      N2 : in out LCA_IP.T_Adresse_IP;
-                      N3 : in out LCA_IP.T_Adresse_IP;
-                      N4 : in out LCA_IP.T_Adresse_IP) is
+                      N1 : in LCA_IP.T_Adresse_IP;
+                      N2 : in LCA_IP.T_Adresse_IP;
+                      N3 : in LCA_IP.T_Adresse_IP;
+                      N4 : in LCA_IP.T_Adresse_IP) is
     begin
-
-        N1 := 00000111;
         IP := N1;
         IP := IP * UN_OCTET + N2;
         IP := IP * UN_OCTET + N3;
@@ -31,23 +28,24 @@ package body Routeur_Functions is
     end Set_IP;
 
 
-    procedure Afficher_IP (IP : in T_Adresse_IP) is
+    procedure Put_IP (IP : in T_Adresse_IP; Largeur : Integer) is
     begin
-        Put (Natural ((IP / UN_OCTET ** 3) mod UN_OCTET), 3); Put (".");
-        Put (Natural ((IP / UN_OCTET ** 2) mod UN_OCTET), 3); Put (".");
-        Put (Natural ((IP / UN_OCTET ** 1) mod UN_OCTET), 3); Put (".");
-        Put (Natural  (IP mod UN_OCTET), 3);
-    end Afficher_IP;
+        Put (Natural ((IP / UN_OCTET ** 3) mod UN_OCTET), Largeur); Put (".");
+        Put (Natural ((IP / UN_OCTET ** 2) mod UN_OCTET), Largeur); Put (".");
+        Put (Natural ((IP / UN_OCTET ** 1) mod UN_OCTET), Largeur); Put (".");
+        Put (Natural  (IP mod UN_OCTET), Largeur);
+    end Put_IP;
 
 
 
-    procedure Afficher_Cellule (D : in LCA_IP.T_Adresse_IP;
-                                M : in LCA_IP.T_Adresse_IP;
-                                P : in Unbounded_String;
-                                F : in Integer) is
+    procedure Afficher_Cellule (D : in out LCA_IP.T_Adresse_IP;
+                                M : in out LCA_IP.T_Adresse_IP;
+                                P : in out Unbounded_String;
+                                F : in out Integer) is
     begin
-        Afficher_IP(D); Put("     ");
-        Afficher_IP(D); Put("     ");
+        Put("| ");
+        Put_IP(D, 3); Put("     ");
+        Put_IP(D, 3); Put("     ");
         Put(P); Put("        ");
         Put_Line(F'Image);
     end Afficher_Cellule;
@@ -58,29 +56,24 @@ package body Routeur_Functions is
                                     Nom_Resultat : Unbounded_String;
                                     Taille_Cache : Integer;
                                     Politique : Unbounded_String;
-                                    Bavard : Boolean) is
+                                    Nbr_Ajoute : Integer) is
     begin
         New_Line;
-        Put_Line ("--------------------- PARRAMETRES ---------------------");
-        Put ("Politique du Cache: ");
+        Put_Line ("+------------------------ STATISTIQUES -------------------------");
+        Put ("| Politique du Cache: ");
         Put (Politique);
         if not (Politique = "FIFO") then
             Put (" ");
         else
             null;
         end if;
-        Put ("   |  Paquet: ");
+        Put ("      | Paquet: ");
         Put_Line(Nom_Paquet);
-        Put ("Taille du Cache:"); Put (Taille_Cache, 4);
-        Put ("       |  Table: "); Put_Line(Nom_Table);
-        Put ("Bavard: ");
-        if Bavard then
-            Put ("oui");
-        else
-            Put ("non");
-        end if;
-        Put ("                |  Résultat: "); Put_Line(Nom_Resultat);
-        New_Line;
+        Put ("| Taille du Cache:"); Put (Taille_Cache, 4);
+        Put ("          | Table: "); Put_Line(Nom_Table);
+        Put ("| Nbr d'ajout au Cache:"); Put (Nbr_Ajoute, 3);
+        Put ("      | Résultat: "); Put_Line(Nom_Resultat);
+        Put_Line ("+---------------------------------------------------------------");
     end Afficher_Parrametres;
 
 
@@ -98,6 +91,40 @@ package body Routeur_Functions is
                             To_String(Mot)(Taille-3) = '.');
         end if;
     end txt_present;
+
+
+    procedure Get_IP (Fichier : in out File_type; IP : in out T_Adresse_IP) is
+        Entier : Integer;
+        Caractere : Character;
+    begin
+        Get(Fichier, Entier);
+        IP := T_Adresse_IP(Entier);
+        for i in 1..3 loop
+            Get(Fichier, Caractere);
+            Get(Fichier, Entier);
+            IP :=  IP * UN_OCTET + T_Adresse_IP(Entier);
+        end loop;
+    end Get_IP;
+
+
+    procedure To_Adresse_IP (Texte : Unbounded_String; IP : in out T_Adresse_IP) is
+        i : Integer;
+        Nombre : Integer;
+        c : Character;
+    begin
+        Nombre := 0;
+        IP := 0;
+        for i in 1..Length(Texte) loop
+            c := To_String(Texte)(i);
+            if c in '0'..'9' then
+                Nombre := Nombre * 10 + (Character'Pos (c) - 16#30#);
+            elsif c = '.' then
+                IP := IP * UN_OCTET + T_Adresse_IP(Nombre);
+                Nombre := 0;
+            end if;
+        end loop;
+        IP := IP * UN_OCTET + T_Adresse_IP(Nombre);
+    end To_Adresse_IP;
 
 
 end Routeur_Functions;
