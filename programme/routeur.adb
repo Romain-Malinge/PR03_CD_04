@@ -128,8 +128,6 @@ begin
      Initialiser(Table);
      while not( End_Of_File (F_Table) ) loop
 
-
-
           Get(F_Table, Entier);
           IP := T_Adresse_IP(Entier);
           for i in 1..3 loop
@@ -152,8 +150,8 @@ begin
 
           Get_Line (F_Table, Port);
           Trim (Port, Both);
-
           Enregistrer (Table, IP, Masque, Port, 0);
+          
      end loop;
      Close (F_Table);
 
