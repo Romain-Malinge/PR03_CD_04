@@ -5,6 +5,7 @@ with Ada.Strings.Unbounded;     use Ada.Strings.Unbounded;
 with Ada.Text_IO.Unbounded_IO;  use Ada.Text_IO.Unbounded_IO;
 with Ada.Command_Line;          use Ada.Command_Line;
 with Ada.Exceptions;            use Ada.Exceptions;	-- pour Exception_Message
+with Ada.IO_Exceptions;         use Ada.IO_Exceptions;
 with LCA_IP;                    use LCA_IP;
 with Routeur_Exceptions;        use Routeur_Exceptions;
 with Routeur_Functions;         use Routeur_Functions;
@@ -132,8 +133,18 @@ begin
     
     
     -- Ouvrir les fichiers
-    Open (F_Table , In_File, -Nom_Table);
-    Open (F_Paquet, In_File, -Nom_Paquet);
+    begin
+        Open (F_Table , In_File, -Nom_Table);
+    exception
+        when ADA.IO_EXCEPTIONS.NAME_ERROR =>
+            raise Table_Not_Found_Exception;    -- si le fichier table manque
+    end;
+    begin
+        Open (F_Paquet, In_File, -Nom_Paquet);
+    exception
+        when ADA.IO_EXCEPTIONS.NAME_ERROR =>
+            raise Paquet_Not_Found_Exception;   -- si le fichier paquet manque
+    end;
     Create (F_Resultat, Out_File, -Nom_Resultat);
     
     
@@ -142,9 +153,14 @@ begin
     while not End_Of_File (F_Table) loop
         -- Enregistrer une ligne du fichier Lca
         Destination := 0;
-        Get_IP(F_Table, Destination);
-        Get_IP(F_Table, Masque);
-        Get_Line (F_Table, Ligne);
+        begin
+            Get_IP(F_Table, Destination);
+            Get_IP(F_Table, Masque);
+            Get_Line (F_Table, Ligne);
+        exception
+            when ADA.IO_EXCEPTIONS.DATA_ERROR =>
+                raise Table_Invalide_Exception;
+        end;
         Trim (Ligne, Both);
         Enregistrer (Table, Destination, Masque, Ligne, 0);
     end loop;
@@ -171,7 +187,10 @@ begin
             Comparer_Lca (Table);  -- Modifie la variable Port
             Put_IP_Interface (F_Resultat, IP, Port);
         else
-            null;
+            New_Line;
+            Put("La ligne n°"); Put(Line(F_Paquet)'Image);
+            Put(" du fichier " & Nom_Paquet);
+            Put_Line(" est incorecte (elle n'a pas été prise en compte)");
         end if;
     end loop;
     
@@ -186,12 +205,21 @@ begin
     
 exception
     when Taille_Cache_Exception =>
-        Put_Line("La taille du cache doit Ãªtre <1");
+        Put_Line("/!\ ERREUR /!\ La taille du cache doit être <1");
     when Not_Txt_Exception =>
-        Put_Line("Les noms de fichiers doivent finir par .txt");
+        Put_Line("/!\ ERREUR /!\ Le nom des fichiers doivent finir par .txt");
     when Not_Politique_Exception =>
-        Put_Line("La politique n'est pas valide, les politique acceptÃ©es sont FIFO, LRU et LFU");
-    
+        Put_Line("/!\ ERREUR /!\ La politique n'est pas valide, les politique acceptÃ©es sont FIFO, LRU et LFU");
+    when Table_Not_Found_Exception =>
+        Put_Line("/!\ ERREUR /!\ Le fichier " & Nom_Table & " n'est pas présent dans le répertoire");
+    when Paquet_Not_Found_Exception =>
+        Put_Line("/!\ ERREUR /!\ Le fichier " & Nom_Paquet & " n'est pas présent dans le répertoire");
+    when Table_Invalide_Exception =>
+        Put_Line("/!\ ERREUR /!\ Le fichier " & Nom_Table & " ne respecte pas les normes d'écriture");
+    when Paquet_Invalide_Exception =>
+        Put_Line("/!\ ERREUR /!\ Le fichier " & Nom_Paquet & " ne respecte pas les normes d'écriture");
+    --when others =>
+        --Put ("erreur pas prévue");
     
 end Routeur;
 

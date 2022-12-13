@@ -111,7 +111,7 @@ package body Routeur_Functions is
         Nombre : Integer;
         c : Character;
     begin
-        Nombre := 0;s
+        Nombre := 0;
         for i in 1..Length(Texte) loop
             c := To_String(Texte)(i);
             if c in '0'..'9' then
