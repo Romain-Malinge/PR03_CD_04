@@ -28,12 +28,12 @@ package body Routeur_Functions is
     end Set_IP;
 
 
-    procedure Put_IP (IP : in T_Adresse_IP; Largeur : Integer) is
+    procedure Put_IP (IP : in T_Adresse_IP) is
     begin
-        Put (Natural ((IP / UN_OCTET ** 3) mod UN_OCTET), Largeur); Put (".");
-        Put (Natural ((IP / UN_OCTET ** 2) mod UN_OCTET), Largeur); Put (".");
-        Put (Natural ((IP / UN_OCTET ** 1) mod UN_OCTET), Largeur); Put (".");
-        Put (Natural  (IP mod UN_OCTET), Largeur);
+        Put (Natural ((IP / UN_OCTET ** 3) mod UN_OCTET), 3); Put (".");
+        Put (Natural ((IP / UN_OCTET ** 2) mod UN_OCTET), 3); Put (".");
+        Put (Natural ((IP / UN_OCTET ** 1) mod UN_OCTET), 3); Put (".");
+        Put (Natural  (IP mod UN_OCTET), 3);
     end Put_IP;
 
 
@@ -44,8 +44,8 @@ package body Routeur_Functions is
                                 F : in out Integer) is
     begin
         Put("| ");
-        Put_IP(D, 3); Put("     ");
-        Put_IP(D, 3); Put("     ");
+        Put_IP(D); Put("     ");
+        Put_IP(M); Put("     ");
         Put(P); Put("        ");
         Put_Line(F'Image);
     end Afficher_Cellule;
@@ -108,12 +108,10 @@ package body Routeur_Functions is
 
 
     procedure To_Adresse_IP (Texte : Unbounded_String; IP : in out T_Adresse_IP) is
-        i : Integer;
         Nombre : Integer;
         c : Character;
     begin
-        Nombre := 0;
-        IP := 0;
+        Nombre := 0;s
         for i in 1..Length(Texte) loop
             c := To_String(Texte)(i);
             if c in '0'..'9' then
@@ -127,4 +125,22 @@ package body Routeur_Functions is
     end To_Adresse_IP;
 
 
+    procedure Put_IP_Interface (Fichier : File_Type;
+                                IP : T_Adresse_IP;
+                                Port : Unbounded_String) is
+    begin
+        Put (Fichier, Natural ((IP / UN_OCTET ** 3) mod UN_OCTET), 3);
+        Put (Fichier, ".");
+        Put (Fichier, Natural ((IP / UN_OCTET ** 2) mod UN_OCTET), 3);
+        Put (Fichier, ".");
+        Put (Fichier, Natural ((IP / UN_OCTET ** 1) mod UN_OCTET), 3);
+        Put (Fichier, ".");
+        Put (Fichier, Natural  (IP mod UN_OCTET), 3);
+        Put (Fichier, " ");
+        Put (Fichier, Port);
+        New_Line (Fichier);
+    end Put_IP_Interface;
+
+
 end Routeur_Functions;
+

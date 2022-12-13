@@ -1,3 +1,0 @@
-routeur_functions.adb:111:09: warning: variable "i" is never read and never assigned [-gnatwv]
-routeur_functions.adb:117:13: warning: for loop implicitly declares loop variable [-gnatwv]
-routeur_functions.adb:117:13: warning: declaration hides "i" declared at line 111 [-gnatwv]

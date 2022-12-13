@@ -1,2 +1,0 @@
-routeur.adb:144:25: warning: "Destination" may be referenced before it has a value [enabled by default]
-routeur.adb:175:39: warning: "IP" may be referenced before it has a value [enabled by default]

@@ -141,6 +141,7 @@ begin
     Initialiser(Table);
     while not End_Of_File (F_Table) loop
         -- Enregistrer une ligne du fichier Lca
+        Destination := 0;
         Get_IP(F_Table, Destination);
         Get_IP(F_Table, Masque);
         Get_Line (F_Table, Ligne);
@@ -151,33 +152,27 @@ begin
     
     
     -- Rediriger les IP du fichier Paquet
-    while (not End_Of_File (F_Paquet)) and then not Fin loop
+    while (not End_Of_File (F_Paquet)) and not Fin loop
         Get_Line (F_Paquet, Ligne);
         Trim (Ligne, Both);
-        case To_String(Ligne)(1) is
-            when 's' =>
-                if Ligne = +"stat" then
-                    Afficher_Parrametres (Nom_Paquet, Nom_Table, Nom_Resultat, Taille_Cache, Politique, Nbr_Ajoute);
-                end if;
-            when 't' =>
-                if Ligne = +"table" then
-                    Afficher_Lca_Titre (Table, +"TABLE");
-                end if;
-            when 'c' =>
-                if Ligne = +"cache" then
-                    Afficher_Lca_Titre (Cache, +"CACHE");
-                end if;
-            when 'f' =>
-                if Ligne = +"fin" then
-                    Fin := True;
-                end if;
-            when '0'..'9' =>
-                To_Adresse_IP (Ligne, IP);
-                Masque := 0;
-                Comparer_Lca (Table);
-                --Ecrire
-            when others => null;
-        end case;
+        if Ligne = +"stat" then
+            Afficher_Parrametres (Nom_Paquet, Nom_Table, Nom_Resultat, Taille_Cache, Politique, Nbr_Ajoute);
+        elsif Ligne = +"table" then
+            Afficher_Lca_Titre (Table, +"TABLE");
+        elsif Ligne = +"cache" then
+            Afficher_Lca_Titre (Cache, +"CACHE");
+        elsif Ligne = +"fin" then
+            Fin := True;
+        elsif To_String(Ligne)(1) in '0'..'9' then
+            -- Router une Adresse IP
+            IP := 0;
+            To_Adresse_IP (Ligne, IP);
+            Masque := 0;
+            Comparer_Lca (Table);  -- Modifie la variable Port
+            Put_IP_Interface (F_Resultat, IP, Port);
+        else
+            null;
+        end if;
     end loop;
     
     

@@ -1,11 +1,9 @@
-with Ada.Strings;               use Ada.Strings;	-- pour Both utilisÃ© par Trim
 with Ada.Text_IO;               use Ada.Text_IO;
 with Ada.Integer_Text_IO;       use Ada.Integer_Text_IO;
 with Ada.Strings.Unbounded;     use Ada.Strings.Unbounded;
 with Ada.Text_IO.Unbounded_IO;  use Ada.Text_IO.Unbounded_IO;
 with Ada.Command_Line;          use Ada.Command_Line;
 with Ada.Exceptions;            use Ada.Exceptions;	-- pour Exception_Message
-
 with Ada.Strings.Unbounded;     use Ada.Strings.Unbounded;
 with LCA_IP;                    use LCA_IP;
 
@@ -21,7 +19,7 @@ package Routeur_Functions is
 
 
     -- Afficher une adresse IP
-    procedure Put_IP (IP : in LCA_IP.T_Adresse_IP; Largeur : Integer);
+    procedure Put_IP (IP : in LCA_IP.T_Adresse_IP);
 
 
     -- Afficher les paramettres du programmes
@@ -50,6 +48,12 @@ package Routeur_Functions is
 
     -- Transforme une IP sous forme de chaine de carractère en T_Adresse_IP
     procedure To_Adresse_IP (Texte : Unbounded_String; IP : in out T_Adresse_IP);
+
+
+    -- Ecrit dans un fichier le couple IP Interface
+    procedure Put_IP_Interface (Fichier : File_Type;
+                                IP : T_Adresse_IP;
+                                Port : Unbounded_String);
 
 
 end Routeur_Functions;
