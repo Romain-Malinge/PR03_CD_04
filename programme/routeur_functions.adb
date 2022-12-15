@@ -129,13 +129,13 @@ package body Routeur_Functions is
                                 IP : T_Adresse_IP;
                                 Port : Unbounded_String) is
     begin
-        Put (Fichier, Natural ((IP / UN_OCTET ** 3) mod UN_OCTET), 3);
+        Put (Fichier, Natural ((IP / UN_OCTET ** 3) mod UN_OCTET), 1);
         Put (Fichier, ".");
-        Put (Fichier, Natural ((IP / UN_OCTET ** 2) mod UN_OCTET), 3);
+        Put (Fichier, Natural ((IP / UN_OCTET ** 2) mod UN_OCTET), 1);
         Put (Fichier, ".");
-        Put (Fichier, Natural ((IP / UN_OCTET ** 1) mod UN_OCTET), 3);
+        Put (Fichier, Natural ((IP / UN_OCTET ** 1) mod UN_OCTET), 1);
         Put (Fichier, ".");
-        Put (Fichier, Natural  (IP mod UN_OCTET), 3);
+        Put (Fichier, Natural  (IP mod UN_OCTET), 1);
         Put (Fichier, " ");
         Put (Fichier, Port);
         New_Line (Fichier);

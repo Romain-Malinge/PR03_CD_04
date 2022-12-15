@@ -24,6 +24,7 @@ procedure Routeur is
     F_Table : File_Type;              -- Le ficher Table
     F_Paquet : File_Type;             -- Le ficher Paquet
     F_Resultat : File_Type;           -- Le ficher Resultat
+    Num_Ligne : Ada.Text_IO.Count;              -- le numéro de la ligne courante
     Table : T_LCA_IP;                 -- La Table de routage sous forme de Lca
     Cache : T_LCA_IP;                 -- Le Cache sous forme de Lca
     IP : T_Adresse_IP;                -- L'addresse IP a router
@@ -69,7 +70,7 @@ procedure Routeur is
                                 P : in out Unbounded_String;
                                 F : in out Integer) is
     begin
-        if ((IP and M) = D) and M > Masque then
+        if ((IP and M) = D) and M >= Masque then
             Port := P;
             Masque := M;
             F := F + 1;
@@ -152,26 +153,34 @@ begin
     Initialiser(Table);
     while not End_Of_File (F_Table) loop
         -- Enregistrer une ligne du fichier Lca
-        Destination := 0;
-        begin
-            Get_IP(F_Table, Destination);
-            Get_IP(F_Table, Masque);
-            Get_Line (F_Table, Ligne);
-        exception
-            when ADA.IO_EXCEPTIONS.DATA_ERROR =>
-                raise Table_Invalide_Exception;
-        end;
-        Trim (Ligne, Both);
-        Enregistrer (Table, Destination, Masque, Ligne, 0);
+        Num_Ligne := Line(F_Table);
+        if End_Of_Line (F_Table) then
+            Skip_Line(F_Table);
+        else
+            Destination := 0;
+            begin
+                Get_IP(F_Table, Destination);
+                Get_IP(F_Table, Masque);
+                Get_Line (F_Table, Ligne);
+            exception
+                when ADA.IO_EXCEPTIONS.DATA_ERROR =>
+                    raise Table_Invalide_Exception;
+            end;
+            Trim (Ligne, Both);
+            Enregistrer (Table, Destination, Masque, Ligne, 0);
+        end if;
     end loop;
     Close (F_Table);
     
     
     -- Rediriger les IP du fichier Paquet
     while (not End_Of_File (F_Paquet)) and not Fin loop
+        Num_Ligne := Line(F_Paquet);
         Get_Line (F_Paquet, Ligne);
         Trim (Ligne, Both);
-        if Ligne = +"stat" then
+        if Length(Ligne)=0 then
+            null;
+        elsif Ligne = +"stat" then
             Afficher_Parrametres (Nom_Paquet, Nom_Table, Nom_Resultat, Taille_Cache, Politique, Nbr_Ajoute);
         elsif Ligne = +"table" then
             Afficher_Lca_Titre (Table, +"TABLE");
@@ -188,12 +197,20 @@ begin
             Put_IP_Interface (F_Resultat, IP, Port);
         else
             New_Line;
-            Put("La ligne n°"); Put(Line(F_Paquet)'Image);
+            Put("La ligne n°"); Put(Num_Ligne'Image);
             Put(" du fichier " & Nom_Paquet);
             Put_Line(" est incorecte (elle n'a pas été prise en compte)");
         end if;
     end loop;
     
+    Set_IP(IP, 147, 100, 111, 201);
+    Set_IP(Masque, 0, 0, 0, 0);
+    Set_IP(Destination, 0, 0, 0, 0);
+    if (IP and Masque) = Destination then
+        Put ("c'est oui");
+    else
+        Put ("c'est non");
+    end if;
     
     -- Les trucs de fin
     Vider (Table);
@@ -215,11 +232,11 @@ exception
     when Paquet_Not_Found_Exception =>
         Put_Line("/!\ ERREUR /!\ Le fichier " & Nom_Paquet & " n'est pas présent dans le répertoire");
     when Table_Invalide_Exception =>
-        Put_Line("/!\ ERREUR /!\ Le fichier " & Nom_Table & " ne respecte pas les normes d'écriture");
+        Put_Line("/!\ ERREUR /!\ Le fichier " & Nom_Table & " ne respecte pas les normes d'écriture à la ");
     when Paquet_Invalide_Exception =>
         Put_Line("/!\ ERREUR /!\ Le fichier " & Nom_Paquet & " ne respecte pas les normes d'écriture");
     --when others =>
-        --Put ("erreur pas prévue");
+        --Put ("ERREUR PAS PREVU C'EST PAS BIEN !!!");
     
 end Routeur;
 
