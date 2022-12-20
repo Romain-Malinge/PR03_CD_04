@@ -24,7 +24,7 @@ procedure Routeur is
     F_Table : File_Type;              -- Le ficher Table
     F_Paquet : File_Type;             -- Le ficher Paquet
     F_Resultat : File_Type;           -- Le ficher Resultat
-    Num_Ligne : Ada.Text_IO.Count;              -- le numéro de la ligne courante
+    Num_Ligne : Ada.Text_IO.Count;    -- le numéro de la ligne courante
     Table : T_LCA_IP;                 -- La Table de routage sous forme de Lca
     Cache : T_LCA_IP;                 -- Le Cache sous forme de Lca
     IP : T_Adresse_IP;                -- L'addresse IP a router
@@ -42,14 +42,13 @@ procedure Routeur is
     ------------------------------- Procedures ---------------------------------
 
     -- Afficher une Lca.
-    procedure Afficher_Lca is
-            new Pour_Chaque (Afficher_Cellule);
+    procedure Afficher_Lca is new Pour_Chaque (Afficher_Cellule);
 
     -- Afficher une Lca avec des titres.
-    procedure Afficher_Lca_Titre (Lca : in T_LCA_IP; Titre : Unbounded_String) is
+    procedure Afficher_Lca_Titre (Lca : in T_LCA_IP; Titre : Unbounded_String; Num_Ligne : Ada.Text_IO.Count) is
     begin
         New_Line;
-        Put_Line ("+--------------------------- " & Titre & " -----------------------------");
+        Put_Line ("+----------------------- " & Titre & " ligne" & Num_Ligne'Image & " -------------------------");
         Put_line ("| Destination         Masque              Interface    Fréquence");
         Put_Line("| ");
         Afficher_Lca (Lca);
@@ -78,8 +77,7 @@ procedure Routeur is
     end Comparer_Cellule;
     
     -- Compare une IP à tout les couples Destination et Masque d'une Lca
-    procedure Comparer_Lca is
-            new Pour_Chaque (Comparer_Cellule);
+    procedure Comparer_Lca is new Pour_Chaque (Comparer_Cellule);
     
     
 begin
@@ -100,7 +98,12 @@ begin
         -- Traiter le a Ã©me argument de la ligne de commande
         if Argument(a)(1) = '-' then
             case Argument(a)(2) is
-                when 'c' => Taille_Cache := Integer'Value (Argument(a+1));
+                when 'c' =>
+                    begin
+                        Taille_Cache := Integer'Value (Argument(a+1));
+                    exception
+                        when CONSTRAINT_ERROR => raise Cache_Exception;
+                    end;
                 when 'P' => Politique := +Argument(a+1);
                 when 'S' => Bavard := False;
                 when 'p' => Nom_Paquet := +Argument(a+1);
@@ -112,22 +115,17 @@ begin
             null;
         end if;
     end loop;
-    -- Commande: .\routeur -P LFU -c 999 -S -p de_bonbon.txt -t basse.txt -r des_courses.txt
     
     
     -- Lever les erreurs du à la ligne de commande
     if Taille_Cache < 1 then
-        raise Taille_Cache_Exception;
-
+        raise Cache_Exception;
     elsif not txt_present(Nom_Paquet) then
         raise Not_Txt_Exception;
-
     elsif not txt_present(Nom_Table) then
         raise Not_Txt_Exception;
-
     elsif not txt_present(Nom_Resultat) then
         raise Not_Txt_Exception;
-
     elsif (Politique /= "FIFO" and Politique /= "LRU" and Politique/= "LFU") then
         raise Not_Politique_Exception;
     end if;
@@ -173,7 +171,7 @@ begin
     Close (F_Table);
     
     
-    -- Rediriger les IP du fichier Paquet
+    -- Traiter le fichier Paquet
     while (not End_Of_File (F_Paquet)) and not Fin loop
         Num_Ligne := Line(F_Paquet);
         Get_Line (F_Paquet, Ligne);
@@ -181,19 +179,21 @@ begin
         if Length(Ligne)=0 then
             null;
         elsif Ligne = +"stat" then
-            Afficher_Parrametres (Nom_Paquet, Nom_Table, Nom_Resultat, Taille_Cache, Politique, Nbr_Ajoute);
+            Afficher_Parrametres (Nom_Paquet, Nom_Table, Nom_Resultat, Taille_Cache, Politique, Nbr_Ajoute, Num_Ligne);
         elsif Ligne = +"table" then
-            Afficher_Lca_Titre (Table, +"TABLE");
+            Afficher_Lca_Titre (Table, +"TABLE", Num_Ligne);
         elsif Ligne = +"cache" then
-            Afficher_Lca_Titre (Cache, +"CACHE");
+            Afficher_Lca_Titre (Cache, +"CACHE", Num_Ligne);
         elsif Ligne = +"fin" then
             Fin := True;
+            New_Line;
+            Put_Line ("FIN ligne" & Num_Ligne'Image);
         elsif To_String(Ligne)(1) in '0'..'9' then
             -- Router une Adresse IP
             IP := 0;
             To_Adresse_IP (Ligne, IP);
             Masque := 0;
-            Comparer_Lca (Table);  -- Modifie la variable Port
+            Comparer_Lca (Table);  -- Modifie les variables Port et Masque
             Put_IP_Interface (F_Resultat, IP, Port);
         else
             New_Line;
@@ -203,40 +203,36 @@ begin
         end if;
     end loop;
     
-    Set_IP(IP, 147, 100, 111, 201);
-    Set_IP(Masque, 0, 0, 0, 0);
-    Set_IP(Destination, 0, 0, 0, 0);
-    if (IP and Masque) = Destination then
-        Put ("c'est oui");
-    else
-        Put ("c'est non");
-    end if;
     
-    -- Les trucs de fin
+    -- Les instructions de fin de programme
     Vider (Table);
     Vider (Cache);
     Close (F_Paquet);
     Close (F_Resultat);
+    if Bavard then
+        Afficher_Parrametres (Nom_Paquet, Nom_Table, Nom_Resultat, Taille_Cache, Politique, Nbr_Ajoute, Num_Ligne);
+    else
+        null;
+    end if;
     New_Line; 
     
     
 exception
-    when Taille_Cache_Exception =>
-        Put_Line("/!\ ERREUR /!\ La taille du cache doit être <1");
+        
+    when Cache_Exception =>
+        Put_Line("/!\ ERREUR /!\ La taille du cache doit être un entier >=1");
     when Not_Txt_Exception =>
         Put_Line("/!\ ERREUR /!\ Le nom des fichiers doivent finir par .txt");
     when Not_Politique_Exception =>
-        Put_Line("/!\ ERREUR /!\ La politique n'est pas valide, les politique acceptÃ©es sont FIFO, LRU et LFU");
+        Put_Line("/!\ ERREUR /!\ La politique " & Politique & " n'est pas valide, les politique acceptÃ©es sont FIFO, LRU et LFU");
     when Table_Not_Found_Exception =>
         Put_Line("/!\ ERREUR /!\ Le fichier " & Nom_Table & " n'est pas présent dans le répertoire");
     when Paquet_Not_Found_Exception =>
         Put_Line("/!\ ERREUR /!\ Le fichier " & Nom_Paquet & " n'est pas présent dans le répertoire");
     when Table_Invalide_Exception =>
-        Put_Line("/!\ ERREUR /!\ Le fichier " & Nom_Table & " ne respecte pas les normes d'écriture à la ");
+        Put_Line("/!\ ERREUR /!\ La ligne" & Num_Ligne'Image & " du fichier " & Nom_Table & " est incorrecte");
     when Paquet_Invalide_Exception =>
-        Put_Line("/!\ ERREUR /!\ Le fichier " & Nom_Paquet & " ne respecte pas les normes d'écriture");
-    --when others =>
-        --Put ("ERREUR PAS PREVU C'EST PAS BIEN !!!");
+        Put_Line("/!\ ERREUR /!\ La ligne" & Num_Ligne'Image & " du fichier " & Nom_Paquet & " est incorrecte");
+    
     
 end Routeur;
-

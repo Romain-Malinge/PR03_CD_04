@@ -26,7 +26,7 @@ package LCA_IP is
 
 
     -- Enregistrer un quadruplet Destination,Masque,Port,Frequence une Lca au début.
-    -- Si la destination est déja présente: modifie les données de la cellules.
+    -- Si le couple destination-masque est déja présente: modifie les données de la cellules.
     procedure Enregistrer (Lca : in out T_LCA_IP;
                            Destination : in T_Adresse_IP;
                            Masque : in T_Adresse_IP;

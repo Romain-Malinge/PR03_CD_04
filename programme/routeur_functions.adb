@@ -56,10 +56,11 @@ package body Routeur_Functions is
                                     Nom_Resultat : Unbounded_String;
                                     Taille_Cache : Integer;
                                     Politique : Unbounded_String;
-                                    Nbr_Ajoute : Integer) is
+                                    Nbr_Ajoute : Integer;
+                                    Num_Ligne : Ada.Text_IO.Count) is
     begin
         New_Line;
-        Put_Line ("+------------------------ STATISTIQUES -------------------------");
+        Put_Line ("+-------------------- STATISTIQUES ligne" & Num_Ligne'Image & " ---------------------");
         Put ("| Politique du Cache: ");
         Put (Politique);
         if not (Politique = "FIFO") then
@@ -115,7 +116,12 @@ package body Routeur_Functions is
         for i in 1..Length(Texte) loop
             c := To_String(Texte)(i);
             if c in '0'..'9' then
-                Nombre := Nombre * 10 + (Character'Pos (c) - 16#30#);
+                begin
+                    Nombre := Nombre * 10 + (Character'Pos (c) - 16#30#);
+                exception
+                    when CONSTRAINT_ERROR =>
+                        raise Paquet_Invalide_Exception;
+                end;
             elsif c = '.' then
                 IP := IP * UN_OCTET + T_Adresse_IP(Nombre);
                 Nombre := 0;

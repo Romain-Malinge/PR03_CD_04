@@ -1,9 +1,4 @@
 with Ada.Text_IO;               use Ada.Text_IO;
-with Ada.Integer_Text_IO;       use Ada.Integer_Text_IO;
-with Ada.Strings.Unbounded;     use Ada.Strings.Unbounded;
-with Ada.Text_IO.Unbounded_IO;  use Ada.Text_IO.Unbounded_IO;
-with Ada.Command_Line;          use Ada.Command_Line;
-with Ada.Exceptions;            use Ada.Exceptions;	-- pour Exception_Message
 with Ada.Strings.Unbounded;     use Ada.Strings.Unbounded;
 with LCA_IP;                    use LCA_IP;
 
@@ -28,7 +23,8 @@ package Routeur_Functions is
                                     Nom_Resultat : Unbounded_String;
                                     Taille_Cache : Integer;
                                     Politique : Unbounded_String;
-                                    Nbr_Ajoute : Integer);
+                                    Nbr_Ajoute : Integer;
+                                    Num_Ligne : Ada.Text_IO.Count);
 
 
     -- Afficher une cellule de Lca
