@@ -23,6 +23,12 @@ package LCA_IP is
     function Taille (Lca : in T_LCA_IP) return Integer with
         Post => Taille'Result >= 0
         and (Taille'Result = 0) = Est_Vide (Lca);
+    
+    
+    -- Obtenir la fréquence d'une interface
+    function La_Frequence (Lca : in out T_LCA_IP;
+                            Destination : in T_Adresse_IP;
+                            Masque : in T_Adresse_IP) return Integer;
 
 
     -- Enregistrer un quadruplet Destination,Masque,Port,Frequence une Lca au début.
@@ -31,17 +37,24 @@ package LCA_IP is
                            Destination : in T_Adresse_IP;
                            Masque : in T_Adresse_IP;
                            Port : in Unbounded_String;
-                           Frequence : in Integer :=0)with
+                           Frequence : in Integer :=0) with
         Post => Destination_Presente (Lca, Destination)
         and (not (Destination_Presente (Lca, Destination)'Old) or Taille (Lca) = Taille (Lca)'Old)
         and (Destination_Presente (Lca, Destination)'Old or Taille (Lca) = Taille (Lca)'Old + 1);
 
     
-    -- Supprimer la cellule associée à une Destination dans une Lca.
+    -- Supprimer la cellule associée à une Destination et un Masque dans une Lca.
     -- Exception : Destination_Absente_Exception si Destination n'est pas présente dans la Lca
-    procedure Supprimer (Lca : in out T_LCA_IP ; Destination : in T_Adresse_IP) with
+    procedure Supprimer (Lca : in out T_LCA_IP ;
+                         Destination : in T_Adresse_IP;
+                         Masque : in T_Adresse_IP) with
         Post =>  Taille (Lca) = Taille (Lca)'Old - 1       -- un élément de moins
         and not Destination_Presente (Lca, Destination);   -- la destination a été suprimé
+    
+    
+    -- Supprimer la dernière cellule dans une Lca.
+    procedure Supprimer_Premier (Lca : in out T_LCA_IP) with
+        Post =>  Taille (Lca) <= Taille (Lca)'Old;       -- un élément de moins
 
 
     -- Savoir si une destination est présente dans une Lca.

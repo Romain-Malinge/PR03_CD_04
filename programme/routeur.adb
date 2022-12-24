@@ -31,6 +31,7 @@ procedure Routeur is
     Destination : T_Adresse_IP;       -- La destination de l'IP
     Masque : T_Adresse_IP;            -- Le masque de la destination
     Port : Unbounded_String;          -- L'interface de l'adresse IP
+    Frequence : Integer;              -- La fréquence d'utilisation dans le cache
     Ligne : Unbounded_String;         -- Une ligne de texte
     Taille_Cache : Integer;           -- La taille maximale du cache
     Politique : Unbounded_String;     -- La politique du cache
@@ -50,7 +51,7 @@ procedure Routeur is
         New_Line;
         Put_Line ("+----------------------- " & Titre & " ligne" & Num_Ligne'Image & " -------------------------");
         Put_line ("| Destination         Masque              Interface    Fréquence");
-        Put_Line("| ");
+        Put_Line("|");
         Afficher_Lca (Lca);
         Put_Line ("+---------------------------------------------------------------");
     end Afficher_Lca_Titre;
@@ -70,9 +71,10 @@ procedure Routeur is
                                 F : in out Integer) is
     begin
         if ((IP and M) = D) and M >= Masque then
-            Port := P;
+            Destination := D;
             Masque := M;
-            F := F + 1;
+            Port := P;
+            Frequence := F;
         end if;
     end Comparer_Cellule;
     
@@ -86,7 +88,7 @@ begin
     Nom_Paquet := +"paquet.txt";
     Nom_Table := +"table.txt";
     Nom_Resultat := +"resultats.txt";
-    Taille_Cache := 10;
+    Taille_Cache := 2;
     Politique := +"FIFO";
     Bavard := True;
     Fin := False;
@@ -191,15 +193,31 @@ begin
         elsif To_String(Ligne)(1) in '0'..'9' then
             -- Router une Adresse IP
             IP := 0;
-            To_Adresse_IP (Ligne, IP);
             Masque := 0;
-            Comparer_Lca (Table);  -- Modifie les variables Port et Masque
+            Port := +"";
+            To_Adresse_IP (Ligne, IP);
+            -- Comparer l'IP au Cache puis à la Table
+            Comparer_Lca (Cache);
+            if Port = "" then  -- Le cache ne peut pas router l'IP
+                Comparer_Lca (Table);
+                Enregistrer (Cache, Destination, Masque, Port, 0);
+                Nbr_Ajoute := Nbr_Ajoute + 1;
+                if Taille(Cache) > Taille_Cache then
+                    Supprimer_Premier(Cache);
+                else
+                    null;
+                end if;
+            else    -- Le cache a routé l'IP
+                Supprimer (Cache, Destination, Masque);
+                Enregistrer (Cache, Destination, Masque, Port, Frequence + 1);
+            end if;
+            -- Modifier le fichier resultat
             Put_IP_Interface (F_Resultat, IP, Port);
         else
             New_Line;
-            Put("La ligne n°"); Put(Num_Ligne'Image);
-            Put(" du fichier " & Nom_Paquet);
-            Put_Line(" est incorecte (elle n'a pas été prise en compte)");
+            Put("La ligne n°");
+            Put(Num_Ligne'Image);
+            Put_Line(" du fichier " & Nom_Paquet & " est incorecte (elle n'a pas été prise en compte)");
         end if;
     end loop;
     

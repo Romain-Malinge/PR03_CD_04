@@ -1,4 +1,0 @@
-  1 initial 50
-  2 courses -10
-  3 apport 110
-  4 retrait 90
