@@ -51,5 +51,9 @@ package Routeur_Functions is
                                 IP : T_Adresse_IP;
                                 Port : Unbounded_String);
 
+    -- Supprimer les élléments en trop dans une Lca pour lui donné une taille choisie
+    procedure Rogner (Lca : in out T_LCA_IP; Taille : in Integer) with
+            Post =>  LCA_IP.Taille (Lca) = Taille;        -- la Lca est à la taille souhaité
+
 
 end Routeur_Functions;

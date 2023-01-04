@@ -148,5 +148,13 @@ package body Routeur_Functions is
     end Put_IP_Interface;
 
 
+    procedure Rogner (Lca : in out T_LCA_IP; Taille : in Integer) is
+    begin
+        while LCA_IP.Taille(Lca) > Taille loop
+            LCA_IP.Supprimer_Premier(Lca);
+        end loop;
+    end Rogner;
+
+
 end Routeur_Functions;
 

@@ -25,10 +25,8 @@ package LCA_IP is
         and (Taille'Result = 0) = Est_Vide (Lca);
     
     
-    -- Obtenir la fréquence d'une interface
-    function La_Frequence (Lca : in out T_LCA_IP;
-                            Destination : in T_Adresse_IP;
-                            Masque : in T_Adresse_IP) return Integer;
+    -- Obtenir la première fréquence d'une Lca
+    function La_Frequence_Premier (Lca : in out T_LCA_IP) return Integer;
 
 
     -- Enregistrer un quadruplet Destination,Masque,Port,Frequence une Lca au début.

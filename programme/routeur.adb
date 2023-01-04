@@ -81,6 +81,42 @@ procedure Routeur is
     -- Compare une IP à tout les couples Destination et Masque d'une Lca
     procedure Comparer_Lca is new Pour_Chaque (Comparer_Cellule);
     
+    -- Supprimme l'élement le moins fréquement utilisé d'une Lca
+    procedure Supprimer_LFU (Lca : in out T_LCA_IP;
+                             Taille : in Integer;
+                             Destination : in LCA_IP.T_Adresse_IP;
+                             Masque : in LCA_IP.T_Adresse_IP) is
+        
+        -- Variables
+        Frequence_Min : Integer;       -- La fréquence d'utilisation min
+        Des_Supr : T_Adresse_IP;       -- La destination à supprimer
+        Mas_Supr : T_Adresse_IP;       -- Le masque à supprimer
+        
+        -- Procedures
+        procedure Comparer_Frequence (D : in out LCA_IP.T_Adresse_IP;
+                                      M : in out LCA_IP.T_Adresse_IP;
+                                      P : in out Unbounded_String;
+                                      F : in out Integer) is
+        begin
+            if F < Frequence_Min and (Destination /= D or Masque /= M) then
+                Des_Supr := D;
+                Mas_Supr := M;
+                Frequence_Min := F;
+            else
+                null;
+            end if;
+        end Comparer_Frequence;
+        
+        procedure Trouver_Min is new Pour_Chaque (Comparer_Frequence);
+    
+    begin
+        Frequence_Min := La_Frequence_Premier(Lca);
+        while LCA_IP.Taille(Lca) > Taille loop
+            Trouver_Min (Lca);
+            Supprimer (Lca, Des_Supr, Mas_Supr);
+        end loop;
+    end Supprimer_LFU;
+    
     
 begin
 
@@ -178,6 +214,8 @@ begin
         Num_Ligne := Line(F_Paquet);
         Get_Line (F_Paquet, Ligne);
         Trim (Ligne, Both);
+        
+        -- Les cas de non Adresse IP
         if Length(Ligne)=0 then
             null;
         elsif Ligne = +"stat" then
@@ -190,29 +228,36 @@ begin
             Fin := True;
             New_Line;
             Put_Line ("FIN ligne" & Num_Ligne'Image);
-        elsif To_String(Ligne)(1) in '0'..'9' then
+            
             -- Router une Adresse IP
+        elsif To_String(Ligne)(1) in '0'..'9' then
             IP := 0;
             Masque := 0;
             Port := +"";
             To_Adresse_IP (Ligne, IP);
-            -- Comparer l'IP au Cache puis à la Table
-            Comparer_Lca (Cache);
-            if Port = "" then  -- Le cache ne peut pas router l'IP
+            Comparer_Lca (Cache);  -- Comparer l'IP au Cache puis à la Table
+            
+            -- Le cache ne peut pas router l'IP
+            if Port = "" then
                 Comparer_Lca (Table);
                 Enregistrer (Cache, Destination, Masque, Port, 0);
                 Nbr_Ajoute := Nbr_Ajoute + 1;
-                if Taille(Cache) > Taille_Cache then
-                    Supprimer_Premier(Cache);
+                if Politique = +"LFU" then
+                    Supprimer_LFU (Cache, Taille_Cache, Destination, Masque);
+                else 
+                    Rogner (Cache, Taille_Cache);   -- Pour les cas FIFO et LRU
+                end if;
+                -- Le cache a routé l'IP
+            else
+                if Politique = +"LRU" then
+                    Supprimer (Cache, Destination, Masque);
                 else
                     null;
                 end if;
-            else    -- Le cache a routé l'IP
-                Supprimer (Cache, Destination, Masque);
                 Enregistrer (Cache, Destination, Masque, Port, Frequence + 1);
+                
             end if;
-            -- Modifier le fichier resultat
-            Put_IP_Interface (F_Resultat, IP, Port);
+            Put_IP_Interface (F_Resultat, IP, Port);    -- Modifier le fichier resultat
         else
             New_Line;
             Put("La ligne n°");

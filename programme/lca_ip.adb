@@ -32,21 +32,15 @@ package body LCA_IP is
     end Taille;
 
 
-    function La_Frequence (Lca : in out T_LCA_IP;
-                            Destination : in T_Adresse_IP;
-                            Masque : in T_Adresse_IP) return Integer is
+    function La_Frequence_Premier (Lca : in out T_LCA_IP) return Integer is
     begin
         -- Creer une nouvelle cellule.
         if Est_Vide(Lca) then
             return 0;
-        -- Modifier la donnee.
-        elsif (Lca.all.Destination = Destination and Lca.all.Masque = Masque) then
-            return Lca.all.Frequence;
-        -- Passer à la cellule suivante.
         else
-            return La_Frequence (Lca.all.Suivant, Destination, Masque);
+            return Lca.all.Frequence;
         end if;
-    end La_Frequence;
+    end La_Frequence_Premier;
 
 
     procedure Enregistrer (Lca : in out T_LCA_IP;
@@ -115,6 +109,7 @@ package body LCA_IP is
             Supprimer (Lca, Lca.all.Destination, Lca.all.Masque);
         end if;
     end Supprimer_Premier;
+
 
     procedure Vider (Lca : in out T_LCA_IP) is
     begin
