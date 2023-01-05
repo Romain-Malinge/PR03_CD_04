@@ -1,11 +1,11 @@
--- D√©finition le type arbre permettant de mod√©liser le cache 
+-- DÈfinir le type arbre permettant de modÈliser le cache 
 
 with LCA_IP; use LCA_IP;
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 
 package Prefix_Tree is
      
-     -- D√©finition de type
+     -- DÈfinition de type
      type T_Arbre is limited private;
      
      -- Initialiser un arbre 
@@ -18,10 +18,13 @@ package Prefix_Tree is
      -- Afficher un arbre 
      procedure Afficher (Arbre : in T_Arbre);
      
-     -- Obtenir le nombre d'√©l√©ments d'un arbre. 
+     -- Obtenir le nombre d'ÈlÈments d'un arbre. 
      function Taille (Arbre : in T_Arbre) return Integer with
        Post => Taille'Result >= 0
        and (Taille'Result = 0) = Est_Vide (Arbre);
+     
+     -- Savoir si une destination est pr√©sente dans une Lca.
+     function Destination_Presente (Arbre : in T_Arbre ; Destination : in T_Adresse_IP) return Boolean;
      
      -- Rafraichir le rang d'une feuille de l'arbre.
      procedure Refresh (Arbre : in out T_Arbre; Destination : in T_Adresse_IP; Masque : in T_Adresse_IP) ;
@@ -39,9 +42,6 @@ package Prefix_Tree is
        Post => Destination_Presente (Arbre, Destination)
        and (not (Destination_Presente (Arbre, Destination)'Old) or Taille (Arbre) = Taille (Arbre)'Old)
        and (Destination_Presente (Arbre, Destination)'Old or Taille (Arbre) = Taille (Arbre)'Old + 1);
-     
-     -- Savoir si une destination est pr√©sente dans une Lca.
-     function Destination_Presente (Arbre : in T_Arbre ; Destination : in T_Adresse_IP) return Boolean;
      
      -- Vider un arbre 
      procedure Vider (Arbre : in T_Arbre) with 

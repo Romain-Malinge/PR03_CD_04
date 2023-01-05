@@ -58,21 +58,67 @@ package body Prefix_Tree is
           end if;
      end Taille;
 
-     -- Sous-programme utile pour dÃ©terminer le rang maximum dans l'arbre
-     function Rang_Max(Arbre : in T_Arbre) return Integer is
+     -- Sous-programme utile pour déterminer le rang maximum dans l'arbre
+     function Rang_Max (Arbre : in T_Arbre) return Integer is
 
      begin
           if Est_Vide(Arbre) then
                return 0;
-          elsif Arbre.all.Feuille and Arbre.all.Rang >  then
-
+          elsif Arbre.all.Feuille then
+               return Arbre.all.Rang;
+          elsif Rang_Max(Arbre.all.Droite) > Rang_Max(Arbre.all.Gauche) then
+               return Rang_Max(Arbre.all.Droite);
+          else
+               return Rang_Max(Arbre.all.Gauche);
           end if;
      end Rang_Max;
 
      function Destination_Presente (Arbre : in T_Arbre ; Destination : in T_Adresse_IP) return Boolean is
-
+          Avancement : Integer;
+          Copie_Arbre : T_Arbre;
      begin
-
+          if Est_Vide (Arbre) then
+               return False;
+          else
+               Copie_Arbre := Arbre;
+               Avancement := 0;
+               while not ( Est_Vide (Copie_Arbre.all.Droite) and Est_Vide (Copie_Arbre.all.Gauche) ) loop
+                    if Copie_Arbre.all.Feuille and Copie_Arbre.all.Destination = Destination then
+                         return True;
+                    elsif ( Copie_Arbre.all.Destination and 2**(31-Avancement) ) = 0 then
+                         Avancement := Avancement + 1;
+                         Copie_Arbre := Copie_Arbre.all.Gauche;
+                    else
+                         Avancement := Avancement + 1;
+                         Copie_Arbre := Copie_Arbre.all.Droite;
+                    end if;
+               end loop;
+               return False;
+          end if;
      end Destination_Presente;
+
+     procedure Refresh (Arbre : in out T_Arbre; Destination : in T_Adresse_IP; Masque : in T_Adresse_IP) is
+          Avancement : Integer;
+          Copie_Arbre : T_Arbre;
+          begin
+          if not ( Destination_Presente (Arbre, Destination) ) then
+               raise Destination_Absente_Exception;
+          else
+               Copie_Arbre := Arbre;
+               Avancement := 0;
+               while not ( Est_Vide (Copie_Arbre.all.Droite) and Est_Vide (Copie_Arbre.all.Gauche) ) loop
+                    if Copie_Arbre.all.Feuille and Copie_Arbre.all.Destination = Destination then
+                         Copie_ArbrE.all.Rang := Rang_Max(Arbre) + 1;
+                    elsif ( Copie_Arbre.all.Destination and 2**(31-Avancement) ) = 0 then
+                         Avancement := Avancement + 1;
+                         Copie_Arbre := Copie_Arbre.all.Gauche;
+                    else
+                         Avancement := Avancement + 1;
+                         Copie_Arbre := Copie_Arbre.all.Droite;
+                    end if;
+               end loop;
+          end if;
+     end Refresh;
+
 
 end Prefix_Tree;
