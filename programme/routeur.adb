@@ -247,7 +247,8 @@ begin
                 else 
                     Rogner (Cache, Taille_Cache);   -- Pour les cas FIFO et LRU
                 end if;
-                -- Le cache a routé l'IP
+                
+            -- Le cache a routé l'IP
             else
                 if Politique = +"LRU" then
                     Supprimer (Cache, Destination, Masque);
