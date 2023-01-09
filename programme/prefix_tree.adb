@@ -162,8 +162,15 @@ package body Prefix_Tree is
     
     procedure Supprimer_Rang_Min (Arbre : in T_Arbre;
                                   Desination : in T_Adresse_IP) is
+        Supr : T_Arbre;
     begin
-        null;
+        if Est_Vide (Arbre) then
+            null;
+        elsif Desination = Arbre.all.Destination then
+            Supr := Arbre;
+            Free (Supr);
+        elsif not Est_Vide(Arbre.all.Gauche) and not Est_Vide(Arbre.all.Droite) then
+        else
     end Supprimer_Rang_Min;
     
     
