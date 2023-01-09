@@ -29,10 +29,10 @@ package body Prefix_Tree is
           if Est_Vide(Arbre) then
                null;
           else
-               -- On affiche de gauche à droite
+               -- On affiche de gauche Ã  droite
                Afficher(Arbre.all.Gauche);
 
-               -- Si on tombe sur une feuille, on affiche ses données
+               -- Si on tombe sur une feuille, on affiche ses donnÃ©es
                if Arbre.all.Feuille then
                     Put_IP(Arbre.all.Destination);
                     Put_IP(Arbre.all.Masque);
@@ -58,7 +58,7 @@ package body Prefix_Tree is
           end if;
      end Taille;
 
-     -- Sous-programme utile pour d�terminer le rang maximum dans l'arbre
+     -- Sous-programme utile pour déterminer le rang maximum dans l'arbre
      function Rang_Max (Arbre : in T_Arbre) return Integer is
 
      begin
@@ -73,52 +73,91 @@ package body Prefix_Tree is
           end if;
      end Rang_Max;
 
-     function Destination_Presente (Arbre : in T_Arbre ; Destination : in T_Adresse_IP) return Boolean is
-          Avancement : Integer;
-          Copie_Arbre : T_Arbre;
+     function Comparer_Arbre (Arbre : in T_Arbre ;
+                              IP : in T_Adresse_IP;
+                              Masque : in T_Adresse_IP;
+                              Port :  in out Unbounded_String;
+                              Avancement : in Integer) return Boolean is
      begin
           if Est_Vide (Arbre) then
                return False;
-          else
-               Copie_Arbre := Arbre;
-               Avancement := 0;
-               while not ( Est_Vide (Copie_Arbre.all.Droite) and Est_Vide (Copie_Arbre.all.Gauche) ) loop
-                    if Copie_Arbre.all.Feuille and Copie_Arbre.all.Destination = Destination then
-                         return True;
-                    elsif ( Copie_Arbre.all.Destination and 2**(31-Avancement) ) = 0 then
-                         Avancement := Avancement + 1;
-                         Copie_Arbre := Copie_Arbre.all.Gauche;
-                    else
-                         Avancement := Avancement + 1;
-                         Copie_Arbre := Copie_Arbre.all.Droite;
-                    end if;
-               end loop;
+          elsif Arbre.all.Feuille and ( ( IP and Masque )  = Arbre.all.Destination ) then
+               Port := Arbre.all.Port;
+               return True;
+          elsif Arbre.all.Feuille and not ( ( IP and Masque ) = Arbre.all.Destination ) then
                return False;
+          elsif not(Arbre.all.Feuille) and ( ( IP and 2**(31-Avancement) ) = 0 ) then
+               return Comparer_Arbre(Arbre.all.Gauche, IP, Masque, Port, Avancement + 1);
+          elsif not(Arbre.all.Feuille) and ( ( IP and 2**(31-Avancement) ) = 1 ) then
+               return Comparer_Arbre(Arbre.all.Droite, IP, Masque, Port, Avancement + 1);
           end if;
-     end Destination_Presente;
+     end Comparer_Arbre;
 
-     procedure Refresh (Arbre : in out T_Arbre; Destination : in T_Adresse_IP; Masque : in T_Adresse_IP) is
-          Avancement : Integer;
-          Copie_Arbre : T_Arbre;
-          begin
-          if not ( Destination_Presente (Arbre, Destination) ) then
-               raise Destination_Absente_Exception;
+     procedure Enregistrer (Arbre : in out T_Arbre; Destination : in T_Adresse_IP;
+                            Masque : in T_Adresse_IP;
+                            Port : in Unbounded_String;
+                            Rang : in Integer;
+                            Avancement : in Integer) is
+          Nouv_Cellule : T_Arbre;
+
+     begin
+          if Est_Vide (Arbre) then
+               Nouv_Cellule := new T_Noeud'(Destination, Masque, Port, True, Null, Null, Rang);
+               Arbre := Nouv_Cellule;
+
+          elsif Arbre.all.Feuille and ( ( Destination and Arbre.all.Masque ) = Arbre.all.Destination ) then
+               Arbre.all.Rang := Rang;
+
+          elsif Arbre.all.Feuille and not( ( Destination and Arbre.all.Masque ) = Arbre.all.Destination ) then
+               if ( ( Destination and 2**(31-Avancement) )  = 0 ) then
+                    Nouv_Cellule := new T_Noeud;
+                    Nouv_Cellule.all.Feuille := False;
+                    Nouv_Cellule.all.Gauche := Arbre;
+                    Nouv_Cellule.all.Droite := Null;
+                    Nouv_Cellule.all.Rang := Rang;
+                    Arbre := Nouv_Cellule;
+               else
+                    Nouv_Cellule := new T_Noeud;
+                    Nouv_Cellule.all.Feuille := False;
+                    Nouv_Cellule.all.Gauche := Null;
+                    Nouv_Cellule.all.Droite := Arbre;
+                    Nouv_Cellule.all.Rang := Rang;
+                    Arbre := Nouv_Cellule;
+               end if;
+               Enregistrer (Arbre, Destination, Masque, Port, Rang, Avancement);
+
+          elsif not(Arbre.all.Feuille) and ( ( Destination and 2**(31-Avancement) ) = 0 ) then
+               Enregistrer (Arbre.all.Gauche, Destination, Masque, Port, Rang, Avancement + 1);
+
+          elsif not(Arbre.all.Feuille) and ( ( Destination and 2**(31-Avancement) ) = 1 ) then
+               Enregistrer (Arbre.all.Droite, Destination, Masque, Port, Rang, Avancement + 1);
+
           else
-               Copie_Arbre := Arbre;
-               Avancement := 0;
-               while not ( Est_Vide (Copie_Arbre.all.Droite) and Est_Vide (Copie_Arbre.all.Gauche) ) loop
-                    if Copie_Arbre.all.Feuille and Copie_Arbre.all.Destination = Destination then
-                         Copie_ArbrE.all.Rang := Rang_Max(Arbre) + 1;
-                    elsif ( Copie_Arbre.all.Destination and 2**(31-Avancement) ) = 0 then
-                         Avancement := Avancement + 1;
-                         Copie_Arbre := Copie_Arbre.all.Gauche;
-                    else
-                         Avancement := Avancement + 1;
-                         Copie_Arbre := Copie_Arbre.all.Droite;
-                    end if;
-               end loop;
+               raise Enregistrer_Exception;
+          end if ;
+     end Enregistrer;
+
+     procedure Least_ranked (Arbre : in T_Arbre;
+                            Destination : in out T_Adresse_IP;
+                            Masque : in out T_Adresse_IP;
+                            Min : in out Integer) is
+          -- On initialiser Min à Chrono avant l'utilisation de Least_ranked
+     begin
+          if Est_Vide (Arbre) then
+               null;
+          elsif Arbre.all.Rang < Min then
+               Destination := Arbre.all.Destination;
+               Masque := Arbre.all.Port;
+               Min := Arbre.all.Rang
           end if;
-     end Refresh;
+          Least_ranked(Arbre.all.Gauche, Destination, Masque, Min);
+          Least_ranked(Arbre.all.Droite, Destination, Masque, Min);
+     end Least_ranked;
 
+     procedure Supprimer (Arbre : in T_Arbre; Desination : in T_Adresse_IP; Masque : in T_Adresse_IP) is
 
+     begin
+     end Supprimer;
+     
+     
 end Prefix_Tree;
