@@ -1,0 +1,16 @@
+routeur_la.adb:229:13: error: "Afficher_Arbre_Titre" is undefined
+routeur_la.adb:241:13: error: "Comparer_Arbre" is undefined
+routeur_la.adb:246:17: error: no candidate interpretations match the actuals:
+routeur_la.adb:246:17: error: too many arguments in call to "Enregistrer"
+routeur_la.adb:246:30: error: expected private type "T_LCA_IP" defined at lca_ip.ads:9
+routeur_la.adb:246:30: error: found private type "T_Arbre" defined at prefix_tree.ads:9
+routeur_la.adb:246:30: error:   ==> in call to "Enregistrer" at lca_ip.ads:34
+routeur_la.adb:249:36: error: expected private type "T_LCA_IP" defined at lca_ip.ads:9
+routeur_la.adb:249:36: error: found private type "T_Arbre" defined at prefix_tree.ads:9
+routeur_la.adb:251:29: error: expected private type "T_LCA_IP" defined at lca_ip.ads:9
+routeur_la.adb:251:29: error: found private type "T_Arbre" defined at prefix_tree.ads:9
+routeur_la.adb:261:17: error: no candidate interpretations match the actuals:
+routeur_la.adb:261:17: error: too many arguments in call to "Enregistrer"
+routeur_la.adb:261:30: error: expected private type "T_LCA_IP" defined at lca_ip.ads:9
+routeur_la.adb:261:30: error: found private type "T_Arbre" defined at prefix_tree.ads:9
+routeur_la.adb:261:30: error:   ==> in call to "Enregistrer" at lca_ip.ads:34

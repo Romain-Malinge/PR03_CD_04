@@ -17,8 +17,8 @@ package Routeur_Functions is
     procedure Put_IP (IP : in LCA_IP.T_Adresse_IP);
 
 
-    -- Afficher les paramettres du programmes
-    procedure Afficher_Parrametres (Nom_Paquet : Unbounded_String;
+    -- Afficher les parametres du programmes
+    procedure Afficher_Parametres (Nom_Paquet : Unbounded_String;
                                     Nom_Table : Unbounded_String;
                                     Nom_Resultat : Unbounded_String;
                                     Taille_Cache : Integer;

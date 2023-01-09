@@ -7,11 +7,13 @@ with Ada.Command_Line;          use Ada.Command_Line;
 with Ada.Exceptions;            use Ada.Exceptions;	-- pour Exception_Message
 with Ada.IO_Exceptions;         use Ada.IO_Exceptions;
 with LCA_IP;                    use LCA_IP;
+with Prefix_Tree;               use Prefix_Tree;
 with Routeur_Exceptions;        use Routeur_Exceptions;
 with Routeur_Functions;         use Routeur_Functions;
+with routeur_ll;
 
 
-procedure Routeur is
+procedure routeur_la is
     
     
     --------------------- Variables globales du programme ----------------------
@@ -26,18 +28,21 @@ procedure Routeur is
     F_Resultat : File_Type;           -- Le ficher Resultat
     Num_Ligne : Ada.Text_IO.Count;    -- le numéro de la ligne courante
     Table : T_LCA_IP;                 -- La Table de routage sous forme de Lca
-    Cache : T_LCA_IP;                 -- Le Cache sous forme de Lca
+    Cache : T_Arbre;                  -- Le Cache sous forme d'Arbre
     IP : T_Adresse_IP;                -- L'addresse IP a router
     Destination : T_Adresse_IP;       -- La destination de l'IP
     Masque : T_Adresse_IP;            -- Le masque de la destination
     Port : Unbounded_String;          -- L'interface de l'adresse IP
     Frequence : Integer;              -- La fréquence d'utilisation dans le cache
+    Rang : Integer;                   -- Le rang dans le cache
+    Min : Integer;                    -- Le rang minimum dans le cache
     Ligne : Unbounded_String;         -- Une ligne de texte
     Taille_Cache : Integer;           -- La taille maximale du cache
     Politique : Unbounded_String;     -- La politique du cache
     Fin : Boolean;                    -- La variable qui indique la fin du programme
     Bavard : Boolean;                 -- Indique si l'utilisateur demande les statistiques
     Nbr_Ajoute : Integer;             -- Le nombre de route ajout\u00e9es au cache
+    Chrono : Integer;                 -- Indique l'avencement du programme
     
     
     ------------------------------- Procedures ---------------------------------
@@ -45,7 +50,7 @@ procedure Routeur is
     -- Afficher une Lca.
     procedure Afficher_Lca is new Pour_Chaque (Afficher_Cellule);
 
-    -- Afficher une Lca avec des titres.
+    -- Afficher une Lca avec un titres.
     procedure Afficher_Lca_Titre (Lca : in T_LCA_IP; Titre : Unbounded_String; Num_Ligne : Ada.Text_IO.Count) is
     begin
         New_Line;
@@ -129,6 +134,7 @@ begin
     Bavard := True;
     Fin := False;
     Nbr_Ajoute := 0;
+    Chrono := 0;
     
     
     -- Traiter les arguments de la ligne de commande
@@ -211,6 +217,7 @@ begin
     
     -- Traiter le fichier Paquet
     while (not End_Of_File (F_Paquet)) and not Fin loop
+        Chrono := Chrono + 1;
         Num_Ligne := Line(F_Paquet);
         Get_Line (F_Paquet, Ligne);
         Trim (Ligne, Both);
@@ -223,42 +230,55 @@ begin
         elsif Ligne = +"table" then
             Afficher_Lca_Titre (Table, +"TABLE", Num_Ligne);
         elsif Ligne = +"cache" then
-            Afficher_Lca_Titre (Cache, +"CACHE", Num_Ligne);
+            Afficher_Arbre_Titre (Cache, +"CACHE", Num_Ligne);
         elsif Ligne = +"fin" then
             Fin := True;
             New_Line;
             Put_Line ("FIN ligne" & Num_Ligne'Image);
             
-            -- Router une Adresse IP
+        -- Router une Adresse IP
         elsif To_String(Ligne)(1) in '0'..'9' then
             IP := 0;
             Masque := 0;
             Port := +"";
             To_Adresse_IP (Ligne, IP);
-            Comparer_Lca (Cache);  -- Comparer l'IP au Cache puis à la Table
+            Comparer_Arbre (Cache, IP, Destination, Masque, Port, Rang);  -- Actualise Port des mas rang freq
             
             -- Le cache ne peut pas router l'IP
             if Port = "" then
-                Comparer_Lca (Table);
-                Enregistrer (Cache, Destination, Masque, Port, 0);
                 Nbr_Ajoute := Nbr_Ajoute + 1;
-                if Politique = +"LFU" then
+                Comparer_Lca (Table);
+                -- Enregistrer avec un rang different selon la politique
+                if Politique = (+"FIFO" or +"LRU") then
+                    Rang := Chrono;
+                else
+                    Rang := 0;
+                end if;
+                Enregistrer (Cache, Destination, Masque, Port, Rang);
+                -- Supprimer le plus bas Rang si la taille est trop grande
+                if Taille(Cache) > Taille_Cache then
+                    Min := Chrono;
+                    Least_ranked (Cache, Destination, Masque, Min);
                     Supprimer_LFU (Cache, Taille_Cache, Destination, Masque);
-                else 
-                    Rogner (Cache, Taille_Cache);   -- Pour les cas FIFO et LRU
+                else
+                    null;
                 end if;
                 
             -- Le cache a routé l'IP
             else
                 if Politique = +"LRU" then
-                    Supprimer (Cache, Destination, Masque);
+                    Rang := Chrono;
+                    Enregistrer (Cache, Destination, Masque, Port, Rang);
+                elsif Politique = +"LFU" then
+                    Rang := Rang + 1;
+                    Enregistrer (Cache, Destination, Masque, Port, Rang);
                 else
                     null;
                 end if;
-                Enregistrer (Cache, Destination, Masque, Port, Frequence + 1);
+                
                 
             end if;
-            Put_IP_Interface (F_Resultat, IP, Port);    -- Modifier le fichier resultat
+            Put_IP_Interface (F_Resultat, IP, Port);    -- Ajouter une ligne dans le fichier resultat
         else
             New_Line;
             Put("La ligne n°");
@@ -274,11 +294,11 @@ begin
     Close (F_Paquet);
     Close (F_Resultat);
     if Bavard then
-        Afficher_Parrametres (Nom_Paquet, Nom_Table, Nom_Resultat, Taille_Cache, Politique, Nbr_Ajoute, Num_Ligne);
+        Afficher_Parametres (Nom_Paquet, Nom_Table, Nom_Resultat, Taille_Cache, Politique, Nbr_Ajoute, Num_Ligne);
     else
         null;
     end if;
-    New_Line; 
+    New_Line;
     
     
 exception
@@ -297,6 +317,5 @@ exception
         Put_Line("/!\ ERREUR /!\ La ligne" & Num_Ligne'Image & " du fichier " & Nom_Table & " est incorrecte");
     when Paquet_Invalide_Exception =>
         Put_Line("/!\ ERREUR /!\ La ligne" & Num_Ligne'Image & " du fichier " & Nom_Paquet & " est incorrecte");
-    
-    
-end Routeur;
+        
+end routeur_la;

@@ -51,7 +51,7 @@ package body Routeur_Functions is
     end Afficher_Cellule;
 
 
-    procedure Afficher_Parrametres (Nom_Paquet : Unbounded_String;
+    procedure Afficher_Parametres (Nom_Paquet : Unbounded_String;
                                     Nom_Table : Unbounded_String;
                                     Nom_Resultat : Unbounded_String;
                                     Taille_Cache : Integer;
@@ -75,7 +75,7 @@ package body Routeur_Functions is
         Put ("| Nbr d'ajout au Cache:"); Put (Nbr_Ajoute, 3);
         Put ("      | Résultat: "); Put_Line(Nom_Resultat);
         Put_Line ("+---------------------------------------------------------------");
-    end Afficher_Parrametres;
+    end Afficher_Parametres;
 
 
     function txt_present (Mot : in Unbounded_String) return Boolean is

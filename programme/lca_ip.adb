@@ -51,15 +51,16 @@ package body LCA_IP is
     is
         New_Cel : T_LCA_IP;
     begin
-        -- Creer une nouvelle cellule.
+        -- Creer une nouvelle cellule
         if Est_Vide(Lca) then
             New_Cel := new T_Cellule'(Destination, Masque, Port, Frequence, Lca);
             Lca := New_Cel;
-        -- Modifier la donnee.
-        elsif (Lca.all.Destination = Destination and Lca.all.Masque = Masque) then
+        -- Modifier la donnee
+        elsif Lca.all.Destination = Destination then
+            Lca.all.Masque := Masque;
             Lca.all.Port := Port;
             Lca.all.Frequence := Frequence;
-        -- Passer à la cellule suivante.
+        -- Passer à la cellule suivante
         else
             Enregistrer (Lca.all.Suivant, Destination, Masque, Port, Frequence);
         end if;
