@@ -1,4 +1,0 @@
-prefix_tree.adb:6:14: error: missing body for "Least_ranked" declared at prefix_tree.ads:33
-prefix_tree.adb:6:14: error: missing body for "Supprimer" declared at prefix_tree.ads:36
-prefix_tree.adb:6:14: error: missing body for "Enregistrer" declared at prefix_tree.ads:39
-prefix_tree.adb:6:14: error: missing body for "Vider" declared at prefix_tree.ads:47

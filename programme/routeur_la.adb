@@ -35,6 +35,7 @@ procedure routeur_la is
     Port : Unbounded_String;          -- L'interface de l'adresse IP
     Frequence : Integer;              -- La fréquence d'utilisation dans le cache
     Rang : Integer;                   -- Le rang dans le cache
+    Avancement : Integer;             -- L'avencement de la recherche dans le cache
     Min : Integer;                    -- Le rang minimum dans le cache
     Ligne : Unbounded_String;         -- Une ligne de texte
     Taille_Cache : Integer;           -- La taille maximale du cache
@@ -226,59 +227,69 @@ begin
         if Length(Ligne)=0 then
             null;
         elsif Ligne = +"stat" then
-            Afficher_Parrametres (Nom_Paquet, Nom_Table, Nom_Resultat, Taille_Cache, Politique, Nbr_Ajoute, Num_Ligne);
+            Afficher_Parametres (Nom_Paquet, Nom_Table, Nom_Resultat, Taille_Cache, Politique, Nbr_Ajoute, Num_Ligne);
         elsif Ligne = +"table" then
             Afficher_Lca_Titre (Table, +"TABLE", Num_Ligne);
         elsif Ligne = +"cache" then
-            Afficher_Arbre_Titre (Cache, +"CACHE", Num_Ligne);
+            New_Line;
+            Put_Line ("+----------------------- CACHE ligne" & Num_Ligne'Image & " -------------------------");
+            Put_line ("| Destination         Masque              Interface    Fréquence");
+            Put_Line("|");
+            Afficher_Arbre (Cache);
+            Put_Line ("+---------------------------------------------------------------");
         elsif Ligne = +"fin" then
             Fin := True;
             New_Line;
             Put_Line ("FIN ligne" & Num_Ligne'Image);
             
-        -- Router une Adresse IP
+            -- Router une Adresse IP
         elsif To_String(Ligne)(1) in '0'..'9' then
             IP := 0;
             Masque := 0;
             Port := +"";
+            Avancement := 0;
             To_Adresse_IP (Ligne, IP);
-            Comparer_Arbre (Cache, IP, Destination, Masque, Port, Rang);  -- Actualise Port des mas rang freq
+            Comparer_Arbre (Cache, IP, Destination, Masque, Port, Rang, Frequence,Avancement);  -- Actualise Port des mas rang freq
             
             -- Le cache ne peut pas router l'IP
             if Port = "" then
                 Nbr_Ajoute := Nbr_Ajoute + 1;
                 Comparer_Lca (Table);
+                
                 -- Enregistrer avec un rang different selon la politique
-                if Politique = (+"FIFO" or +"LRU") then
+                if Politique = +"FIFO" or Politique = "LRU" then
                     Rang := Chrono;
                 else
                     Rang := 0;
                 end if;
-                Enregistrer (Cache, Destination, Masque, Port, Rang);
+                Frequence := 0;
+                Avancement := 0;
+                Enregistrer (Cache, Destination, Masque, Port, Rang, Frequence, Avancement);
+                
                 -- Supprimer le plus bas Rang si la taille est trop grande
                 if Taille(Cache) > Taille_Cache then
                     Min := Chrono;
-                    Least_ranked (Cache, Destination, Masque, Min);
-                    Supprimer_LFU (Cache, Taille_Cache, Destination, Masque);
+                    Least_ranked (Cache, Destination, Min);
+                    Supprimer_Rang_Min (Cache, Destination);
                 else
                     null;
                 end if;
                 
-            -- Le cache a routé l'IP
+                -- Le cache a routé l'IP
             else
+                Frequence := Frequence + 1;
                 if Politique = +"LRU" then
                     Rang := Chrono;
-                    Enregistrer (Cache, Destination, Masque, Port, Rang);
                 elsif Politique = +"LFU" then
                     Rang := Rang + 1;
-                    Enregistrer (Cache, Destination, Masque, Port, Rang);
                 else
                     null;
                 end if;
-                
+                Avancement := 0;
+                Enregistrer (Cache, Destination, Masque, Port, Rang, Frequence, Avancement);
                 
             end if;
-            Put_IP_Interface (F_Resultat, IP, Port);    -- Ajouter une ligne dans le fichier resultat
+            Put_IP_Interface (F_Resultat, IP, Port);  -- Ajouter une ligne dans le fichier resultat
         else
             New_Line;
             Put("La ligne n°");
