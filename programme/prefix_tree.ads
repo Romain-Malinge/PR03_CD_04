@@ -51,11 +51,11 @@ package Prefix_Tree is
                             Min : in out Integer); 
     
     -- Supprimer une feuille donnée de l'arbre
-    procedure Supprimer_Rang_Min (Arbre : in T_Arbre;
-                                  Desination : in T_Adresse_IP);
+    procedure Supprimer_Rang_Min (Arbre : in out T_Arbre;
+                                  Destination : in T_Adresse_IP);
      
     -- Vider un arbre 
-    procedure Vider (Arbre : in T_Arbre) with 
+    procedure Vider (Arbre : in out T_Arbre) with 
             Post => Est_Vide (Arbre);
      
 private
