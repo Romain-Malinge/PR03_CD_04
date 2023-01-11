@@ -31,7 +31,6 @@ package Prefix_Tree is
                               Destination : in out T_Adresse_IP;
                               Masque : in out T_Adresse_IP;
                               Port : in out Unbounded_String;
-                              Rang : in out Integer;
                               Frequence : in out Integer;
                               Avancement : in out Integer);
 
