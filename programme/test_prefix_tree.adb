@@ -11,14 +11,14 @@ procedure Test_Prefix_Tree is
      function "+" (Item : in String) return Unbounded_String
                    renames To_Unbounded_String;
 
-     -- DÈfinition des variables
+     -- D√©finition des variables
      Arbre : T_Arbre;         -- Arbre sur lequel on effectuera les tests
-     IP : T_Adresse_IP;       -- Variable qui va contenir les IP que l'on va ajouter ‡ Arbre
-     Masque : T_Adresse_IP;   -- Variable qui va contenir les masques que l'on va ajouter ‡ Arbre
-     Port : Unbounded_String; -- Variable qui va contenir les interfaces que l'on va ajouter ‡ Arbre
-     Avancement : Integer;    -- Variable entiËre utile pour la rÈcursivitÈ de la procÈdure Enregistrer du module Prefix_Tree
-     Chrono : Integer;        -- Compteur d'ajout ‡ l'arbre
-     Min : Integer;           -- Variable utile ‡ la supression de la feuille de plus petit rang
+     IP : T_Adresse_IP;       -- Variable qui va contenir les IP que l'on va ajouter √† Arbre
+     Masque : T_Adresse_IP;   -- Variable qui va contenir les masques que l'on va ajouter √† Arbre
+     Port : Unbounded_String; -- Variable qui va contenir les interfaces que l'on va ajouter √† Arbre
+     Avancement : Integer;    -- Variable enti√®re utile pour la r√©cursivit√© de la proc√©dure Enregistrer du module Prefix_Tree
+     Chrono : Integer;        -- Compteur d'ajout √† l'arbre
+     Min : Integer;           -- Variable utile √† la supression de la feuille de plus petit rang
 
 begin
 
@@ -26,37 +26,37 @@ begin
      Initialiser(Arbre);
      Chrono := 0;
 
-     -- Enregistrer des ÈlÈments dans l'arbre
+     -- Enregistrer des √©l√©ments dans l'arbre
 
-     -- 1Ëre feuille
+     -- 1√®re feuille
      Set_IP(IP, 192, 0 , 0, 0);
      Set_IP(Masque, 255, 0, 0, 0);
      Port := +"eth1";
      Avancement := 0;
-     -- Selon la logique de conception, l'arbre Ètant vide, la feuille est crÈÈe juste ‡ droite de la racine
+     -- Selon la logique de conception, l'arbre √©tant vide, la feuille est cr√©√©e juste √† droite de la racine
      Enregistrer(Arbre, IP, Masque, Port, Chrono, 0 , Avancement);
      Chrono := Chrono + 1 ;
 
-     -- 2Ëme feuille
+     -- 2√®me feuille
      Set_IP(IP, 128, 0, 0, 0);
      Set_IP(Masque, 255, 0, 0, 0);
      Port := +"eth2";
      Avancement := 0;
-     -- Selon la logique de conception, cela devrait pousser la feuille prÈcÈdente pour pouvoir discriminer la nouvelle feuille
+     -- Selon la logique de conception, cela devrait pousser la feuille pr√©c√©dente pour pouvoir discriminer la nouvelle feuille
      Enregistrer(Arbre, IP, Masque, Port, Chrono, 0 , Avancement);
      Chrono := Chrono + 1;
 
-     -- 3Ëme feuille
+     -- 3√®me feuille
      Set_IP(IP, 96, 0, 0, 0);
      Set_IP(Masque, 255, 0, 0, 0);
      Port := +"eth3";
      Avancement := 0;
-     -- Selon la logique de conception, cela ne devrait pousser aucune feuille et crÈer une feuille ‡ gauche de la racine
+     -- Selon la logique de conception, cela ne devrait pousser aucune feuille et cr√©er une feuille √† gauche de la racine
      Enregistrer(Arbre, IP, Masque, Port, Chrono, 0 , Avancement);
      Chrono := Chrono + 1;
-     -- Comme cette feuille existe dÈj‡, on rafraichit son rang.
-     Enregistrer(Arbre, IP, Masque, Port, Chrono, 0 , Avancement);
-     -- Chrono := Chrono + 1;
+     -- Comme cette feuille existe d√©j√†, on rafraichit son rang.
+     Enregistrer(Arbre, IP, Masque, Port, Chrono, 0 , Avancement); -- Bizarrement le fait de rafraichir le rang d'une feuille d√©j√† pr√©sente fait boucler √† l'infini le programme..
+     Chrono := Chrono + 1;
 
      Afficher_Arbre (Arbre);
 
@@ -71,7 +71,7 @@ begin
      -- Fin du test
      Vider(Arbre);
      if Est_Vide (Arbre) then
-          Put_Line (" L'arbre est soigneusement supprimÈ ");
+          Put_Line (" L'arbre est soigneusement supprim√© ");
      else
           Put_Line (" Il faut revoir la fonction Vider.. ");
      end if;
