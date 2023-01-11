@@ -13,8 +13,8 @@ with Routeur_Functions;         use Routeur_Functions;
 
 
 
--- Commande pour tester les trois politiques:
--- .\routeur_ll -S -c 3 -P <POLITIQUE> -t table_p.txt -p paquet_p.txt
+-- Commande pour tester les trois politiques avec les deux caches:
+-- .\routeur_l[la] -S -c 3 -P <POLITIQUE> -t table_p.txt -p paquet_p.txt
 
 procedure Test (Arbre : in out T_Arbre) is
     IP : T_Adresse_IP;

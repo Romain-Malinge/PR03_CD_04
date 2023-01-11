@@ -124,7 +124,7 @@ begin
     Nom_Paquet := +"paquet.txt";
     Nom_Table := +"table.txt";
     Nom_Resultat := +"resultats.txt";
-    Taille_Cache := 10;
+    Taille_Cache := 3;
     Politique := +"FIFO";
     Bavard := True;
     Fin := False;

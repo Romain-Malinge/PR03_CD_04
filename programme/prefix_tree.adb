@@ -27,7 +27,7 @@ package body Prefix_Tree is
         if Est_Vide(Arbre) then
             null;
         else
-            -- On affiche de gauche Ã  droite
+            -- Affiche les branches de gauche
             Afficher_Arbre(Arbre.all.Gauche);
 
             -- Si on tombe sur une feuille, on affiche ses donnÃ©es
@@ -36,11 +36,12 @@ package body Prefix_Tree is
                 Put_IP(Arbre.all.Destination); Put("     ");
                 Put_IP(Arbre.all.Masque); Put("     ");
                 Put(To_String(Arbre.all.Port)); Put("        ");
-                Put(Arbre.all.Rang'Image);Put("        "); ----------DEL
                 Put_Line(Arbre.all.Frequence'Image);
             else
                 null;
             end if;
+            
+            -- Affiche les branches de droite
             Afficher_Arbre(Arbre.all.Droite);
         end if;
     end Afficher_Arbre;
@@ -83,16 +84,13 @@ package body Prefix_Tree is
     begin
         if Est_Vide (Arbre) then
             null;
-        elsif Arbre.all.Feuille and ((IP and Arbre.all.Masque) = Arbre.all.Destination) then
+        elsif Arbre.all.Feuille and ((IP and Arbre.all.Masque) = Arbre.all.Destination) and Masque < Arbre.all.Masque then
             Destination := Arbre.all.Destination;
             Masque := Arbre.all.Masque;
             Port := Arbre.all.Port;
             Frequence := Arbre.all.Frequence;
-        elsif not(Arbre.all.Feuille) and ((IP and 2**(31-Avancement)) = 0) then
-            Avancement := Avancement + 1;
-            Comparer_Arbre(Arbre.all.Gauche, IP, Destination, Masque, Port, Frequence, Avancement);
         else
-            Avancement := Avancement + 1;
+            Comparer_Arbre(Arbre.all.Gauche, IP, Destination, Masque, Port, Frequence, Avancement);
             Comparer_Arbre(Arbre.all.Droite, IP, Destination, Masque, Port, Frequence, Avancement);
         end if;
     end Comparer_Arbre;
@@ -159,33 +157,19 @@ package body Prefix_Tree is
     end Least_ranked;
 
     
-    procedure Supprimer_Et_Repli (Arbre : in T_Arbre;
-                                  Destination : in T_Adresse_IP;
-                                  Avancement : in out Integer;
-                                  Repli : in out Integer) is
-        Supr : T_Arbre;
-        Noeud_2_Branches : Boolean;
+    procedure Supprimer_Destination (Arbre : in out T_Arbre;
+                                     Destination : in T_Adresse_IP) is
     begin
-        Noeud_2_Branches := not Est_Vide(Arbre.all.Gauche) and not Est_Vide(Arbre.all.Droite);
-        if Noeud_2_Branches and then not (Arbre.all.Gauche.all.Destination = Destination and
-                                          Arbre.all.Droite.all.Destination = Destination) then   
-            Repli := Avancement;
-        end if;
-          
         if Est_Vide (Arbre) then
             null;
-        elsif Destination = Arbre.all.Destination then
-            Supr := Arbre;
-            Free (Supr);
-        elsif (Destination and 2**(31-Avancement)) = 0 then
-            Avancement := Avancement + 1;
-            Supprimer_Et_Repli(Arbre.all.Gauche, Destination, Avancement, Repli);
+        elsif Arbre.all.Feuille and Destination = Arbre.all.Destination then
+            Free (Arbre);
+            Arbre := Null;
         else
-            Avancement := Avancement + 1;
-            Supprimer_Et_Repli(Arbre.all.Droite, Destination, Avancement, Repli);
+            Supprimer_Destination(Arbre.all.Gauche, Destination);
+            Supprimer_Destination(Arbre.all.Droite, Destination);
         end if;
-         
-    end Supprimer_Et_Repli;
+    end Supprimer_Destination;
      
      
     procedure Supprimer_Noeud (Arbre : in out T_Arbre) is
@@ -222,9 +206,11 @@ package body Prefix_Tree is
         Copie_Arbre := Arbre;
         Repli := 0;
         Avancement := 0;
-        Supprimer_Et_Repli(Arbre, Destination, Avancement, Repli);
-        Put_line("   Replit : " & Repli'Image);
+        
+        --Supprimer_Et_Repli(Arbre, Destination, Avancement, Repli);
+        Put_line("   Repli : " & Repli'Image);--------DEL
         Avancement := 0;
+        
         --
         for i in 1..Repli loop
             if (Destination and 2**(31-Avancement)) = 0 then 
@@ -248,7 +234,7 @@ package body Prefix_Tree is
             end loop;
         end if;
     end Supprimer_Rang_Min;
-          
+    
     
     procedure Vider (Arbre : in out T_Arbre) is
         --Destination : T_Adresse_IP;

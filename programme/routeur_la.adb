@@ -30,6 +30,7 @@ procedure routeur_la is
     Cache : T_Arbre;                  -- Le Cache sous forme d'Arbre
     IP : T_Adresse_IP;                -- L'addresse IP a router
     Destination : T_Adresse_IP;       -- La destination de l'IP
+    Memoire : T_Adresse_IP;           -- Une adrresse IP Memoire
     Masque : T_Adresse_IP;            -- Le masque de la destination
     Port : Unbounded_String;          -- L'interface de l'adresse IP
     Frequence : Integer;              -- La fréquence d'utilisation dans le cache
@@ -129,7 +130,7 @@ begin
     Nom_Table := +"table.txt";
     Nom_Resultat := +"resultats.txt";
     Taille_Cache := 3;
-    Politique := +"LFU";
+    Politique := +"FIFO";
     Bavard := True;
     Fin := False;
     Nbr_Ajoute := 0;
@@ -260,17 +261,14 @@ begin
                 -- Supprimer le plus bas Rang si la taille est trop grande
                 if Taille(Cache) > Taille_Cache then
                     Min := Integer(Num_Ligne);
-                    Avancement := 0;
-                    Least_ranked (Cache, Destination, Min);
-                    Put("Destination à supprimmer:"); Put_IP(Destination);----!!!!!!!!!!
-                    Supprimer_Rang_Min (Cache, Destination);
+                    Least_ranked (Cache, Memoire, Min);
+                    Supprimer_Destination (Cache, Memoire);
                 else
                     null;
                 end if;
                 
                 -- Modifier le rang de la nouvelle feuille avec 0 (sinon elle aurait était supprimée)
                 if Politique = +"LFU" then
-                    Put("oui");
                     Avancement := 0;
                     Enregistrer (Cache, Destination, Masque, Port, Frequence, Frequence, Avancement);
                 else
@@ -283,7 +281,7 @@ begin
                 if Politique = +"LRU" then
                     Rang := Integer(Num_Ligne);
                 elsif Politique = +"LFU" then
-                    Rang := Rang + 1;
+                    Rang := Frequence;
                 else
                     null;
                 end if;
@@ -302,7 +300,7 @@ begin
     
     -- Les instructions de fin de programme
     Vider (Table);
-    ---------------------- Vider (Cache);
+    Vider (Cache);
     Close (F_Paquet);
     Close (F_Resultat);
     if Bavard then

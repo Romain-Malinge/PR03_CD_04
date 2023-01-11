@@ -47,7 +47,12 @@ package Prefix_Tree is
     -- Chercher les informations de la feuille avec le plus petit rang
     procedure Least_ranked (Arbre : in T_Arbre;
                             Destination : in out T_Adresse_IP;
-                            Min : in out Integer); 
+                            Min : in out Integer);
+    
+    -- Supprimer une destination dans un arbre
+    procedure Supprimer_Destination (Arbre : in out T_Arbre;
+                                     Destination : in T_Adresse_IP);
+    
     
     -- Supprimer une feuille donnée de l'arbre
     procedure Supprimer_Rang_Min (Arbre : in out T_Arbre;
