@@ -89,19 +89,19 @@ package body Prefix_Tree is
                            Avancement : in out Integer) is
         Nouv_Cellule : T_Arbre;
     begin
-        -- ajouter une nouvelle feuille
+        -- Ajouter une nouvelle feuille
         if Est_Vide (Arbre) then
             Nouv_Cellule := new T_Noeud'(Destination, Masque, Port, True, Rang, Frequence, Null, Null);
             Arbre := Nouv_Cellule;
         
-            -- modifier une feuille
+        -- Modifier une feuille
         elsif Arbre.all.Feuille and Destination = Arbre.all.Destination then
             Arbre.all.Masque := Masque;
             Arbre.all.Port := Port;
             Arbre.all.Rang := Rang;
             Arbre.all.Frequence := Frequence;
         
-            -- pousser une feuille
+        -- Pousser une feuille à gauche ou à droite
         elsif Arbre.all.Feuille and not(Destination = Arbre.all.Destination) then
             Nouv_Cellule := new T_Noeud;
             if ((Arbre.all.Destination and 2**(31-Avancement)) = 0) then

@@ -3,14 +3,12 @@ with Ada.Integer_Text_IO;       use Ada.Integer_Text_IO;
 with Ada.Strings.Unbounded;     use Ada.Strings.Unbounded;
 with Ada.Text_IO.Unbounded_IO;  use Ada.Text_IO.Unbounded_IO;
 with Ada.Command_Line;          use Ada.Command_Line;
-with Ada.Exceptions;            use Ada.Exceptions;	-- pour Exception_Message
+with Ada.Exceptions;            use Ada.Exceptions;
 with LCA_IP;                    use LCA_IP;
 with Routeur_Exceptions;        use Routeur_Exceptions;
 
 
-
 package body Routeur_Functions is
-
 
     UN_OCTET : constant T_Adresse_IP := 2 ** 8;
 
@@ -35,7 +33,6 @@ package body Routeur_Functions is
         Put (Natural ((IP / UN_OCTET ** 1) mod UN_OCTET), 3); Put (".");
         Put (Natural  (IP mod UN_OCTET), 3);
     end Put_IP;
-
 
 
     procedure Afficher_Cellule (D : in out LCA_IP.T_Adresse_IP;
@@ -68,10 +65,10 @@ package body Routeur_Functions is
         else
             null;
         end if;
-        Put ("      | Paquet: ");
+        Put ("      | Paquet:   ");
         Put_Line(Nom_Paquet);
         Put ("| Taille du Cache:"); Put (Taille_Cache, 4);
-        Put ("          | Table: "); Put_Line(Nom_Table);
+        Put ("          | Table:    "); Put_Line(Nom_Table);
         Put ("| Nbr d'ajout au Cache:"); Put (Nbr_Ajoute, 3);
         Put ("      | Résultat: "); Put_Line(Nom_Resultat);
         Put_Line ("+---------------------------------------------------------------");

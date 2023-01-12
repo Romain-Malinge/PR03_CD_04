@@ -20,54 +20,6 @@ package body LCA_IP is
     end;
 
 
-    function Est_Trie (Lca : in T_LCA_IP) return Boolean is
-    begin
-        if Est_Vide(Lca) then
-            return True;
-        elsif not Est_Vide(Lca.all.Suivant) and then Lca.all.Masque < Lca.all.Suivant.all.Masque then
-            return False;
-        else
-            return Est_Trie (Lca.all.Suivant);
-        end if;
-    end Est_Trie;
-
-
-    procedure Trie (Lca : in out T_LCA_IP) is
-        IP_Mem : T_Adresse_IP;
-        Port_Mem : Unbounded_String;
-
-
-        procedure Trie_Echange (Lca : T_LCA_IP) is
-        begin
-            if Est_Vide(Lca) then
-                null;
-            elsif not Est_Vide(Lca.all.Suivant) and then Lca.all.Masque < Lca.all.Suivant.all.Masque then
-                -- Echange les Destinations
-                IP_Mem := Lca.all.Destination;
-                Lca.all.Destination := Lca.all.Suivant.all.Destination;
-                Lca.all.Suivant.all.Destination := IP_Mem;
-                -- Echange les Masques
-                IP_Mem := Lca.all.Masque;
-                Lca.all.Masque := Lca.all.Suivant.all.Masque;
-                Lca.all.Suivant.all.Masque := IP_Mem;
-                -- Echange les interfaces
-                Port_Mem := Lca.all.Port;
-                Lca.all.Port := Lca.all.Suivant.all.Port;
-                Lca.all.Suivant.all.Port := Port_Mem;
-                -- Echange Suivant
-                Trie_Echange (Lca.all.Suivant);
-            else
-                Trie_Echange (Lca.all.Suivant);
-            end if;
-        end Trie_Echange;
-
-    begin
-        while not Est_Trie(Lca) loop
-            Trie_Echange(Lca);
-        end loop;
-    end Trie;
-
-
     function Taille (Lca : in T_LCA_IP) return Integer is
     begin
         if Est_Vide(Lca) then
@@ -75,14 +27,12 @@ package body LCA_IP is
         else
             null;
         end if;
-        -- Passer à la cellule suivante.
         return Taille (Lca.all.Suivant) + 1;
     end Taille;
 
 
     function La_Frequence_Premier (Lca : in out T_LCA_IP) return Integer is
     begin
-        -- Creer une nouvelle cellule.
         if Est_Vide(Lca) then
             return 0;
         else
@@ -118,12 +68,11 @@ package body LCA_IP is
         if Est_Vide(Lca) then
             New_Cel := new T_Cellule'(Destination, Masque, Port, Frequence, Lca);
             Lca := New_Cel;
-            -- Modifier la donnee
+        -- Modifier les données
         elsif Lca.all.Destination = Destination then
             Lca.all.Masque := Masque;
             Lca.all.Port := Port;
             Lca.all.Frequence := Frequence;
-            -- Passer à la cellule suivante
         else
             Enregistrer (Lca.all.Suivant, Destination, Masque, Port, Frequence);
         end if;
@@ -142,19 +91,17 @@ package body LCA_IP is
     end;
 
 
-    procedure Supprimer (Lca : in out T_LCA_IP;
-                         Destination : in T_Adresse_IP) is
-        A_Liberer : T_LCA_IP;
+    procedure Supprimer (Lca : in out T_LCA_IP; Destination : in T_Adresse_IP) is
+        To_Free : T_LCA_IP;
     begin
-        -- Lever l'exeption.
+        -- Si la Destination a supprimer n'est pas présente dans la Lca
         if Est_Vide(Lca) then
             raise Destination_Absente_Exception;
-            -- Supprimer sans laisser de miettes
+        -- Supprimer sans laisser de miettes
         elsif Lca.all.Destination = Destination then
-            A_Liberer := Lca;
+            To_Free := Lca;
             Lca := Lca.all.Suivant;
-            Free (A_Liberer);
-            -- Passer à la cellule suivante
+            Free (To_Free);
         else
             Supprimer (Lca.all.Suivant, Destination);
         end if;
@@ -163,10 +110,8 @@ package body LCA_IP is
 
     procedure Supprimer_Premier (Lca : in out T_LCA_IP) is
     begin
-        -- Lever l'exeption.
         if Est_Vide(Lca) then
             null;
-            -- Supprimer la première cellule sans laisser de miettes
         else
             Supprimer (Lca, Lca.all.Destination);
         end if;
@@ -174,12 +119,10 @@ package body LCA_IP is
 
 
     procedure Supprimer_LFU (Lca : in out T_LCA_IP; Dernier_Ajout : in T_Adresse_IP) is
-
-        -- Variables
         Frequence_Min : Integer;       -- La fréquence d'utilisation min
         Des_Supr : T_Adresse_IP;       -- La destination à supprimer
 
-        -- Procedures
+        -- Actualise la plus petite fr\u00e9quence et la destination a supprimer qui n'est pas le dernier ajout au cache
         procedure Trouver_Min (Lca : in T_LCA_IP; Frequence_Min : in out Integer) is
         begin
             if Est_Vide(Lca) then
@@ -192,8 +135,6 @@ package body LCA_IP is
                 Trouver_Min(Lca.all.Suivant, Frequence_Min);
             end if;
         end Trouver_Min;
-
-
 
     begin
         Frequence_Min := La_Frequence_Premier(Lca);
@@ -212,23 +153,22 @@ package body LCA_IP is
 
     procedure Pour_Chaque (Lca : in T_LCA_IP) is
 
-        procedure Traitement (Lca : in T_LCA_IP) is   -- La procedure qui empeche l'arret en cas d'erreur
+        -- La procedure qui empeche l'arret en cas d'erreur
+        procedure Traitement (Lca : in T_LCA_IP) is
         begin
             Traiter (Lca.all.Destination, Lca.all.Masque, Lca.all.Port, Lca.all.Frequence);
         exception
-            when others => null;
+            when others => null; -- Permet de ne passer s'arrêter en cas d'erreur
         end Traitement;
 
     begin
         if not Est_Vide(Lca) then
             Traitement (Lca);
-            -- Passer à la cellule suivante.
             Pour_Chaque (Lca.all.Suivant);
         else
             null;
         end if;
     end Pour_Chaque;
-
 
 
 end LCA_IP;

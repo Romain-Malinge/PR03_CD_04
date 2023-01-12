@@ -12,9 +12,14 @@ with Routeur_Exceptions;        use Routeur_Exceptions;
 with Routeur_Functions;         use Routeur_Functions;
 
 
+---------------   DEMONSTRATIONS   ---------------
 
--- Commande pour tester les trois politiques avec les deux caches:
--- .\routeur_l[la] -S -c 3 -P <POLITIQUE> -t table_p.txt -p paquet_p.txt
+-- Commande pour vérifier les tailles des masques du cache:
+-- .\routeur_la -p paquet_tailles_masques.txt -t table_tailles_masques.txt -S
+
+-- Commande pour tester les trois politiques:
+-- .\routeur_la -p paquet_teste_politique.txt -t table_teste_politique.txt -c 3 -S -P XXX
+
 
 procedure Test (Arbre : in out T_Arbre) is
     IP : T_Adresse_IP;

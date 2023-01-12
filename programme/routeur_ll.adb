@@ -13,8 +13,7 @@ with Routeur_Functions;         use Routeur_Functions;
 
 procedure routeur_ll is
     
-    
-    --------------------- Variables globales du programme ----------------------
+    --------------------------------- VARIABLES --------------------------------
     
     UN_OCTET : constant T_Adresse_IP := 2 ** 8;
     
@@ -41,7 +40,7 @@ procedure routeur_ll is
     Nbr_Ajoute : Integer;             -- Le nombre de route ajout\u00e9es au cache
     
     
-    ------------------------------- Procedures ---------------------------------
+    ------------------------------- PROCEDURES ---------------------------------
 
     -- Transformer un String en un Unbounded_String
     function "+" (Item : in String) return Unbounded_String
@@ -82,36 +81,37 @@ procedure routeur_ll is
     -- Compare une IP à tout les couples Destination et Masque d'une Lca
     procedure Comparer_Lca is new Pour_Chaque (Comparer_Cellule);
 
-    
+
+------------------------------ DEBUT DU PROGRAMME ------------------------------
 begin
 
     -- Initialisation des variables
     Nom_Paquet := +"paquet.txt";
     Nom_Table := +"table.txt";
     Nom_Resultat := +"resultats.txt";
-    Taille_Cache := 3;
-    Politique := +"LFU";
+    Taille_Cache := 10;
+    Politique := +"FIFO";
     Bavard := True;
     Fin := False;
     Nbr_Ajoute := 0;
     
     
     -- Traiter les arguments de la ligne de commande
-    for a in 1..Argument_Count loop
-        -- Traiter le a Ã©me argument de la ligne de commande
-        if Argument(a)(1) = '-' then
-            case Argument(a)(2) is
+    for arg in 1..Argument_Count loop
+        -- Traiter le a ieme argument de la ligne de commande
+        if Argument(arg)(1) = '-' then
+            case Argument(arg)(2) is
             when 'c' =>
                 begin
-                    Taille_Cache := Integer'Value (Argument(a+1));
+                    Taille_Cache := Integer'Value (Argument(arg+1));
                 exception
                     when CONSTRAINT_ERROR => raise Cache_Exception;
                 end;
-            when 'P' => Politique := +Argument(a+1);
+            when 'P' => Politique := +Argument(arg+1);
             when 'S' => Bavard := False;
-            when 'p' => Nom_Paquet := +Argument(a+1);
-            when 't' => Nom_Table := +Argument(a+1);
-            when 'r' => Nom_Resultat := +Argument(a+1);
+            when 'p' => Nom_Paquet := +Argument(arg+1);
+            when 't' => Nom_Table := +Argument(arg+1);
+            when 'r' => Nom_Resultat := +Argument(arg+1);
             when others => null;
             end case;
         else
@@ -171,9 +171,6 @@ begin
             Enregistrer (Table, Destination, Masque, Ligne, 0);
         end if;
     end loop;
-    -- Tier la table par masque croissant
-    Trie(Table);
-    Close (F_Table);
     
     
     -- Traiter le fichier Paquet
@@ -196,7 +193,7 @@ begin
             New_Line;
             Put_Line ("FIN ligne" & Num_Ligne'Image);
             
-            -- Router une Adresse IP
+        -- Router une Adresse IP
         elsif To_String(Ligne)(1) in '0'..'9' then
             IP := 0;
             Masque := 0;
@@ -229,9 +226,11 @@ begin
                     null;
                 end if;
                 Enregistrer (Cache, IP and Grand_Masque, Grand_Masque, Port, Frequence + 1);
-                
             end if;
+            
             Put_IP_Interface (F_Resultat, IP, Port);    -- Modifier le fichier resultat
+            
+        -- La lignes ne correspond à rien
         else
             New_Line;
             Put("La ligne n°");
@@ -244,6 +243,7 @@ begin
     -- Les instructions de fin de programme
     Vider (Table);
     Vider (Cache);
+    Close (F_Table);
     Close (F_Paquet);
     Close (F_Resultat);
     if Bavard then
@@ -253,7 +253,8 @@ begin
     end if;
     New_Line;
     
-    
+
+---------------------------------- EXEPTIONS -----------------------------------
 exception
         
     when Cache_Exception =>
@@ -270,6 +271,5 @@ exception
         Put_Line("/!\ ERREUR /!\ La ligne" & Num_Ligne'Image & " du fichier " & Nom_Table & " est incorrecte");
     when Paquet_Invalide_Exception =>
         Put_Line("/!\ ERREUR /!\ La ligne" & Num_Ligne'Image & " du fichier " & Nom_Paquet & " est incorrecte");
-    
     
 end routeur_ll;

@@ -1,27 +1,26 @@
-with Ada.Strings;               use Ada.Strings;	-- pour Both utilisÃ© par Trim
-with Ada.Text_IO;               use Ada.Text_IO;
-with Ada.Integer_Text_IO;       use Ada.Integer_Text_IO;
-with Ada.Strings.Unbounded;     use Ada.Strings.Unbounded;
-with Ada.Text_IO.Unbounded_IO;  use Ada.Text_IO.Unbounded_IO;
-with Ada.Command_Line;          use Ada.Command_Line;
-with Ada.Exceptions;            use Ada.Exceptions;	-- pour Exception_Message
-with Ada.IO_Exceptions;         use Ada.IO_Exceptions;
-with LCA_IP;                    use LCA_IP;
-with Prefix_Tree;               use Prefix_Tree;
-with Routeur_Exceptions;        use Routeur_Exceptions;
-with Routeur_Functions;         use Routeur_Functions;
+with Ada.Strings;                use Ada.Strings;
+with Ada.Text_IO;                use Ada.Text_IO;
+with Ada.Integer_Text_IO;        use Ada.Integer_Text_IO;
+with Ada.Strings.Unbounded;      use Ada.Strings.Unbounded;
+with Ada.Text_IO.Unbounded_IO;   use Ada.Text_IO.Unbounded_IO;
+with Ada.Command_Line;           use Ada.Command_Line;
+with Ada.Exceptions;             use Ada.Exceptions;
+with Ada.IO_Exceptions;          use Ada.IO_Exceptions;
+with LCA_IP;                     use LCA_IP;
+with Prefix_Tree;                use Prefix_Tree;
+with Routeur_Exceptions;         use Routeur_Exceptions;
+with Routeur_Functions;          use Routeur_Functions;
 
 
 procedure routeur_la is
     
-    
-    --------------------- Variables globales du programme ----------------------
+    --------------------------------- VARIABLES --------------------------------
     
     UN_OCTET : constant T_Adresse_IP := 2 ** 8;
     
     Nom_Table : Unbounded_String;     -- Le nom du fichier contenant la table
     Nom_Paquet : Unbounded_String;    -- Le nom du fichier contenant les paquets
-    Nom_Resultat : Unbounded_String;  -- Le nom du fichier contenant le r\u00e9sultat
+    Nom_Resultat : Unbounded_String;  -- Le nom du fichier contenant le résultat
     F_Table : File_Type;              -- Le ficher Table
     F_Paquet : File_Type;             -- Le ficher Paquet
     F_Resultat : File_Type;           -- Le ficher Resultat
@@ -32,7 +31,7 @@ procedure routeur_la is
     Destination : T_Adresse_IP;       -- La destination de l'IP
     A_Sprimmer : T_Adresse_IP;        -- La destination a supprimer du cache
     Masque : T_Adresse_IP;            -- Le masque de la destination
-    Grand_Masque : T_Adresse_IP;      -- Le masque le plus long de la table
+    Grand_Masque : T_Adresse_IP;      -- Le masque qui permet d'eviter les erreurs de cache
     Port : Unbounded_String;          -- L'interface de l'adresse IP
     Frequence : Integer;              -- La fréquence d'utilisation dans le cache
     Rang : Integer;                   -- Le rang dans le cache
@@ -43,10 +42,10 @@ procedure routeur_la is
     Politique : Unbounded_String;     -- La politique du cache
     Fin : Boolean;                    -- La variable qui indique la fin du programme
     Bavard : Boolean;                 -- Indique si l'utilisateur demande les statistiques
-    Nbr_Ajoute : Integer;             -- Le nombre de route ajout\u00e9es au cache
+    Nbr_Ajoute : Integer;             -- Le nombre de route ajouté au cache
     
     
-    ------------------------------- Procedures ---------------------------------
+    ------------------------------- PROCEDURES ---------------------------------
     
     -- Transformer un String en un Unbounded_String
     function "+" (Item : in String) return Unbounded_String
@@ -88,14 +87,15 @@ procedure routeur_la is
     procedure Comparer_Lca is new Pour_Chaque (Comparer_Cellule);
 
     
+------------------------------ DEBUT DU PROGRAMME ------------------------------ 
 begin
 
     -- Initialisation des variables
     Nom_Paquet := +"paquet.txt";
     Nom_Table := +"table.txt";
     Nom_Resultat := +"resultats.txt";
-    Taille_Cache := 3;
-    Politique := +"LFU";
+    Taille_Cache := 10;
+    Politique := +"FIFO";
     Bavard := True;
     Fin := False;
     A_Sprimmer := 0;
@@ -104,21 +104,21 @@ begin
     
     
     -- Traiter les arguments de la ligne de commande
-    for a in 1..Argument_Count loop
-        -- Traiter le a Ã©me argument de la ligne de commande
-        if Argument(a)(1) = '-' then
-            case Argument(a)(2) is
+    for arg in 1..Argument_Count loop
+        -- Traiter le a ieme argument de la ligne de commande
+        if Argument(arg)(1) = '-' then
+            case Argument(arg)(2) is
             when 'c' =>
                 begin
-                    Taille_Cache := Integer'Value (Argument(a+1));
+                    Taille_Cache := Integer'Value (Argument(arg+1));
                 exception
                     when CONSTRAINT_ERROR => raise Cache_Exception;
                 end;
-            when 'P' => Politique := +Argument(a+1);
+            when 'P' => Politique := +Argument(arg+1);
             when 'S' => Bavard := False;
-            when 'p' => Nom_Paquet := +Argument(a+1);
-            when 't' => Nom_Table := +Argument(a+1);
-            when 'r' => Nom_Resultat := +Argument(a+1);
+            when 'p' => Nom_Paquet := +Argument(arg+1);
+            when 't' => Nom_Table := +Argument(arg+1);
+            when 'r' => Nom_Resultat := +Argument(arg+1);
             when others => null;
             end case;
         else
@@ -178,9 +178,6 @@ begin
             Enregistrer (Table, Destination, Masque, Ligne, 0);
         end if;
     end loop;
-    -- Tier la table par masque croissant
-    Trie(Table);
-    Close (F_Table);
     
    
     -- Traiter le fichier Paquet
@@ -260,9 +257,11 @@ begin
                 Grand_Masque := Masque;
                 Trouver_Grand_Masque(Table, IP, Destination, Grand_Masque);
                 Enregistrer (Cache, (IP and Grand_Masque), Grand_Masque, Port, Rang, Frequence, Avancement);
-                
             end if;
+            
             Put_IP_Interface (F_Resultat, IP, Port);  -- Ajouter une ligne dans le fichier resultat
+        
+        -- La lignes ne correspond à rien
         else
             New_Line;
             Put("La ligne n°" & Num_Ligne'Image);
@@ -274,6 +273,7 @@ begin
     -- Les instructions de fin de programme
     Vider (Table);
     Vider (Cache);
+    Close (F_Table);
     Close (F_Paquet);
     Close (F_Resultat);
     if Bavard then
@@ -283,7 +283,8 @@ begin
     end if;
     New_Line;
     
-    
+
+---------------------------------- EXEPTIONS -----------------------------------
 exception
         
     when Cache_Exception =>
