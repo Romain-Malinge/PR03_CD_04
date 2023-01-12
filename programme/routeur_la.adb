@@ -86,43 +86,7 @@ procedure routeur_la is
     
     -- Compare une IP à tout les couples Destination et Masque d'une Lca
     procedure Comparer_Lca is new Pour_Chaque (Comparer_Cellule);
-    
-    -- Supprimme l'élement le moins fréquement utilisé d'une Lca
-    procedure Supprimer_LFU (Lca : in out T_LCA_IP;
-                             Taille : in Integer;
-                             Destination : in LCA_IP.T_Adresse_IP;
-                             Masque : in LCA_IP.T_Adresse_IP) is
-        
-        -- Variables
-        Frequence_Min : Integer;       -- La fréquence d'utilisation min
-        Des_Supr : T_Adresse_IP;       -- La destination à supprimer
-        Mas_Supr : T_Adresse_IP;       -- Le masque à supprimer
-        
-        -- Procedures
-        procedure Comparer_Frequence (D : in out LCA_IP.T_Adresse_IP;
-                                      M : in out LCA_IP.T_Adresse_IP;
-                                      P : in out Unbounded_String;
-                                      F : in out Integer) is
-        begin
-            if F < Frequence_Min and (Destination /= D or Masque /= M) then
-                Des_Supr := D;
-                Mas_Supr := M;
-                Frequence_Min := F;
-            else
-                null;
-            end if;
-        end Comparer_Frequence;
-        
-        procedure Trouver_Min is new Pour_Chaque (Comparer_Frequence);
-    
-    begin
-        Frequence_Min := La_Frequence_Premier(Lca);
-        while LCA_IP.Taille(Lca) > Taille loop
-            Trouver_Min (Lca);
-            Supprimer (Lca, Des_Supr);
-        end loop;
-    end Supprimer_LFU;
-    
+
     
 begin
 
@@ -205,11 +169,6 @@ begin
             begin
                 Get_IP(F_Table, Destination);
                 Get_IP(F_Table, Masque);
-                if Masque > Grand_Masque then
-                    Grand_Masque := Masque;
-                else
-                    null;
-                end if;
                 Get_Line (F_Table, Ligne);
             exception
                 when ADA.IO_EXCEPTIONS.DATA_ERROR =>
@@ -261,6 +220,9 @@ begin
             if Port = "" then
                 Nbr_Ajoute := Nbr_Ajoute + 1;
                 Comparer_Lca (Table);
+                Grand_Masque := Masque;
+                Trouver_Grand_Masque(Table, IP, Destination, Grand_Masque);
+                
                 -- Enregistrer la nouvelle feuille
                 Rang := Integer(Num_Ligne);
                 Frequence := 0;
@@ -284,7 +246,7 @@ begin
                     null;
                 end if;
                 
-                -- Le cache a routé l'IP
+            -- Le cache a routé l'IP
             else
                 Frequence := Frequence + 1;
                 if Politique = +"LRU" then
@@ -295,7 +257,9 @@ begin
                     null;
                 end if;
                 Avancement := 0;
-                Enregistrer (Cache, Destination, Masque, Port, Rang, Frequence, Avancement);
+                Grand_Masque := Masque;
+                Trouver_Grand_Masque(Table, IP, Destination, Grand_Masque);
+                Enregistrer (Cache, (IP and Grand_Masque), Grand_Masque, Port, Rang, Frequence, Avancement);
                 
             end if;
             Put_IP_Interface (F_Resultat, IP, Port);  -- Ajouter une ligne dans le fichier resultat

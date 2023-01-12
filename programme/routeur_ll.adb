@@ -81,7 +81,7 @@ procedure routeur_ll is
     
     -- Compare une IP à tout les couples Destination et Masque d'une Lca
     procedure Comparer_Lca is new Pour_Chaque (Comparer_Cellule);
-    
+
     
 begin
 
@@ -206,15 +206,17 @@ begin
             
             -- Le cache ne peut pas router l'IP
             if Port = "" then
+                Nbr_Ajoute := Nbr_Ajoute + 1;
                 Comparer_Lca (Table);
                 Grand_Masque := Masque;
                 Trouver_Grand_Masque(Table, IP, Destination, Grand_Masque);
                 Enregistrer (Cache, IP and Grand_Masque, Grand_Masque, Port, 0);
-                Nbr_Ajoute := Nbr_Ajoute + 1;
+                
+                -- Supprimer le plus bas Rang si la taille est trop grande
                 if Politique = +"LFU" and Taille(Cache) > Taille_Cache then
                     Supprimer_LFU (Cache, IP and Grand_Masque);
                 else 
-                    Rogner (Cache, Taille_Cache);   -- Pour les cas FIFO et LRU
+                    Rogner (Cache, Taille_Cache);  -- Pour les cas FIFO et LRU
                 end if;
                 
             -- Le cache a routé l'IP
