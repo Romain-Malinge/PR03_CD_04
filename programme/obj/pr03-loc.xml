@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <Locations >
-  <Project>
-    <vfs_file>C:\Users\romai\Desktop\PR03_CD_04\programme\pr03.gpr</vfs_file>
+  <Project >
     <file_marker column=" 1" line=" 1" >
       <vfs_project>C:\Users\romai\Desktop\PR03_CD_04\programme\pr03.gpr</vfs_project>
       <vfs_file>C:\Users\romai\Desktop\PR03_CD_04\programme\routeur_ll.adb</vfs_file>
