@@ -74,7 +74,7 @@ begin
      
      Min := Taille(Arbre);
      pragma Assert ( Min = 2 );
-     Put_Line ("L'arbre a bien reduit de taille, il ne reste plus que" & Min'Image & "feuilles.");
+     Put_Line ("L'arbre a bien reduit de taille, il ne reste plus que" & Min'Image & " feuilles.");
      Least_ranked (Arbre, IP, Min);
      pragma Assert ( Min = 2 );
      Put_Line("La feuille de plus petit rang vaut désormais" & Min'Image &".");
