@@ -17,6 +17,9 @@ package Prefix_Tree is
      
     -- Afficher un arbre 
     procedure Afficher_Arbre (Arbre : in T_Arbre);
+    
+    -- Affichage graphique de l'arbre (vérification des placements des feuilles)
+    procedure Affichage_GArbre (Arbre : in T_Arbre);
      
     -- Obtenir le nombre d'éléments d'un arbre. 
     function Taille (Arbre : in T_Arbre) return Integer with
