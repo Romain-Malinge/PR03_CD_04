@@ -119,7 +119,7 @@ procedure routeur_la is
         Frequence_Min := La_Frequence_Premier(Lca);
         while LCA_IP.Taille(Lca) > Taille loop
             Trouver_Min (Lca);
-            Supprimer (Lca, Des_Supr, Mas_Supr);
+            Supprimer (Lca, Des_Supr);
         end loop;
     end Supprimer_LFU;
     
