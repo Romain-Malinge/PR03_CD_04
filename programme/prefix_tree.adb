@@ -46,33 +46,7 @@ package body Prefix_Tree is
         end if;
     end Afficher_Arbre;
     
-     procedure Affichage_GArbre (Arbre : in T_Arbre) is 
-     begin
-          if Est_Vide(Arbre) then
-               null;
-          else
-               -- Affiche les branches de gauche
-               Put("|<-");
-               Affichage_GArbre(Arbre.all.Gauche);
-
-               -- Si on tombe sur une feuille, on affiche ses donnÃ©es
-               if Arbre.all.Feuille then
-                    Put("| ");
-                    Put_IP(Arbre.all.Destination); Put("     ");
-                    Put_IP(Arbre.all.Masque); Put("     ");
-                    Put(To_String(Arbre.all.Port)); Put("        ");
-                    Put_Line(Arbre.all.Frequence'Image);
-               else
-                    null;
-               end if;
-            
-               -- Affiche les branches de droite
-               Put("|->");
-               Affichage_GArbre(Arbre.all.Droite);
-          end if;
-     end Affichage_GArbre;
-
-
+    
     function Taille (Arbre : in T_Arbre) return Integer is
     begin
         if Est_Vide(Arbre) then
