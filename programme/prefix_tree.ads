@@ -23,16 +23,13 @@ package Prefix_Tree is
             Post => Taille'Result >= 0
             and (Taille'Result = 0) = Est_Vide (Arbre);
     
-
-     
     -- Router une IP en la comparent à toutes les feuilles d'un arbre
     procedure Comparer_Arbre (Arbre : in T_Arbre ;
                               IP : in T_Adresse_IP;
                               Destination : in out T_Adresse_IP;
                               Masque : in out T_Adresse_IP;
                               Port : in out Unbounded_String;
-                              Frequence : in out Integer;
-                              Avancement : in out Integer);
+                              Frequence : in out Integer);
 
     -- Enregistre une feuille dans l'arbre 
     procedure Enregistrer (Arbre : in out T_Arbre;
@@ -43,7 +40,6 @@ package Prefix_Tree is
                            Frequence : in Integer;
                            Avancement : in out Integer);
    
-    
     -- Chercher les informations de la feuille avec le plus petit rang
     procedure Least_ranked (Arbre : in T_Arbre;
                             Destination : in out T_Adresse_IP;
@@ -53,11 +49,6 @@ package Prefix_Tree is
     procedure Supprimer_Destination (Arbre : in out T_Arbre;
                                      Destination : in T_Adresse_IP);
     
-    
-    -- Supprimer une feuille donnée de l'arbre
-    procedure Supprimer_Rang_Min (Arbre : in out T_Arbre;
-                                  Destination : in T_Adresse_IP);
-     
     -- Vider un arbre 
     procedure Vider (Arbre : in out T_Arbre) with 
             Post => Est_Vide (Arbre);

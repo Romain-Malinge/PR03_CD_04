@@ -1,1 +1,0 @@
-test.adb:25:12: warning: "IP" may be referenced before it has a value [enabled by default]
