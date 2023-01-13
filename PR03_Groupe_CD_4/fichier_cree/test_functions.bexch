@@ -1,0 +1,23 @@
+[GENERATED OBJECT FILE]
+b__test_functions.o
+[PROJECT FILES]
+C:\Users\romai\Desktop\PR03_CD_04\PR03_Groupe_CD_4\pr03.gpr
+20230113195242 7797a5df97171760fe25dc5b5ae52a37
+[BOUND OBJECT FILES]
+C:\Users\romai\Desktop\PR03_CD_04\PR03_Groupe_CD_4\fichier_cree\routeur_exceptions.o
+C:\Users\romai\Desktop\PR03_CD_04\PR03_Groupe_CD_4\fichier_cree\lca_ip.o
+C:\Users\romai\Desktop\PR03_CD_04\PR03_Groupe_CD_4\fichier_cree\routeur_functions.o
+C:\Users\romai\Desktop\PR03_CD_04\PR03_Groupe_CD_4\fichier_cree\prefix_tree.o
+C:\Users\romai\Desktop\PR03_CD_04\PR03_Groupe_CD_4\fichier_cree\test_functions.o
+[GENERATED SOURCE FILES]
+b__test_functions.ads
+b__test_functions.adb
+b__test_functions.ali
+[RESULTING OPTIONS]
+-LC:\Users\romai\Desktop\PR03_CD_04\PR03_Groupe_CD_4\fichier_cree\
+-LC:\Users\romai\Desktop\PR03_CD_04\PR03_Groupe_CD_4\fichier_cree\
+-LC:/gnat/2021/lib/gcc/x86_64-w64-mingw32/10.3.1/adalib/
+-static
+-static-libgcc
+C:/gnat/2021/lib/gcc/x86_64-w64-mingw32/10.3.1/adalib/libgnat.a
+-Wl,--stack=0x2000000
