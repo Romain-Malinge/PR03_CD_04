@@ -40,7 +40,7 @@ package ada_main is
    pragma Export (C, main, "main");
 
    type Version_32 is mod 2 ** 32;
-   u00001 : constant Version_32 := 16#8dd549ae#;
+   u00001 : constant Version_32 := 16#19b437ea#;
    pragma Export (C, u00001, "routeur_laB");
    u00002 : constant Version_32 := 16#2e11c0b1#;
    pragma Export (C, u00002, "system__standard_libraryB");
@@ -386,22 +386,60 @@ package ada_main is
    pragma Export (C, u00172, "system__memoryB");
    u00173 : constant Version_32 := 16#76873720#;
    pragma Export (C, u00173, "system__memoryS");
-   u00174 : constant Version_32 := 16#4285ec93#;
+   u00174 : constant Version_32 := 16#0de3fcc3#;
    pragma Export (C, u00174, "prefix_treeB");
    u00175 : constant Version_32 := 16#e71f2b7c#;
    pragma Export (C, u00175, "prefix_treeS");
-   u00176 : constant Version_32 := 16#4dbc8a1f#;
+   u00176 : constant Version_32 := 16#9e0e0c0b#;
    pragma Export (C, u00176, "routeur_functionsB");
-   u00177 : constant Version_32 := 16#4aed1b94#;
+   u00177 : constant Version_32 := 16#058b0bc4#;
    pragma Export (C, u00177, "routeur_functionsS");
-   u00178 : constant Version_32 := 16#2b70b149#;
-   pragma Export (C, u00178, "system__concat_3B");
-   u00179 : constant Version_32 := 16#248a0db1#;
-   pragma Export (C, u00179, "system__concat_3S");
-   u00180 : constant Version_32 := 16#fd83e873#;
-   pragma Export (C, u00180, "system__concat_2B");
-   u00181 : constant Version_32 := 16#2d5a86c4#;
-   pragma Export (C, u00181, "system__concat_2S");
+   u00178 : constant Version_32 := 16#e18a47a0#;
+   pragma Export (C, u00178, "ada__float_text_ioB");
+   u00179 : constant Version_32 := 16#39060f6c#;
+   pragma Export (C, u00179, "ada__float_text_ioS");
+   u00180 : constant Version_32 := 16#6424aad3#;
+   pragma Export (C, u00180, "system__img_fltS");
+   u00181 : constant Version_32 := 16#1b28662b#;
+   pragma Export (C, u00181, "system__float_controlB");
+   u00182 : constant Version_32 := 16#cf061228#;
+   pragma Export (C, u00182, "system__float_controlS");
+   u00183 : constant Version_32 := 16#2549028f#;
+   pragma Export (C, u00183, "system__img_utilB");
+   u00184 : constant Version_32 := 16#44802e3b#;
+   pragma Export (C, u00184, "system__img_utilS");
+   u00185 : constant Version_32 := 16#690df0ad#;
+   pragma Export (C, u00185, "system__powten_fltS");
+   u00186 : constant Version_32 := 16#c90890af#;
+   pragma Export (C, u00186, "system__img_lfltS");
+   u00187 : constant Version_32 := 16#b684afd1#;
+   pragma Export (C, u00187, "system__img_lluS");
+   u00188 : constant Version_32 := 16#0be1c959#;
+   pragma Export (C, u00188, "system__powten_lfltS");
+   u00189 : constant Version_32 := 16#1422974c#;
+   pragma Export (C, u00189, "system__img_llfS");
+   u00190 : constant Version_32 := 16#b6fa998a#;
+   pragma Export (C, u00190, "system__powten_llfS");
+   u00191 : constant Version_32 := 16#18ee5867#;
+   pragma Export (C, u00191, "system__val_fltS");
+   u00192 : constant Version_32 := 16#8aea7eed#;
+   pragma Export (C, u00192, "system__exn_fltS");
+   u00193 : constant Version_32 := 16#0414e57b#;
+   pragma Export (C, u00193, "system__val_lfltS");
+   u00194 : constant Version_32 := 16#34ab9f34#;
+   pragma Export (C, u00194, "system__exn_lfltS");
+   u00195 : constant Version_32 := 16#de111da4#;
+   pragma Export (C, u00195, "system__val_llfS");
+   u00196 : constant Version_32 := 16#19055f44#;
+   pragma Export (C, u00196, "system__exn_llfS");
+   u00197 : constant Version_32 := 16#2b70b149#;
+   pragma Export (C, u00197, "system__concat_3B");
+   u00198 : constant Version_32 := 16#248a0db1#;
+   pragma Export (C, u00198, "system__concat_3S");
+   u00199 : constant Version_32 := 16#fd83e873#;
+   pragma Export (C, u00199, "system__concat_2B");
+   u00200 : constant Version_32 := 16#2d5a86c4#;
+   pragma Export (C, u00200, "system__concat_2S");
 
    --  BEGIN ELABORATION ORDER
    --  ada%s
@@ -413,6 +451,8 @@ package ada_main is
    --  system.address_operations%b
    --  system.atomic_counters%s
    --  system.atomic_counters%b
+   --  system.float_control%s
+   --  system.float_control%b
    --  system.img_int%s
    --  system.img_lli%s
    --  system.img_llli%s
@@ -423,6 +463,9 @@ package ada_main is
    --  system.crtl%s
    --  interfaces.c_streams%s
    --  interfaces.c_streams%b
+   --  system.powten_flt%s
+   --  system.powten_lflt%s
+   --  system.powten_llf%s
    --  system.storage_elements%s
    --  system.storage_elements%b
    --  system.stack_checking%s
@@ -440,8 +483,11 @@ package ada_main is
    --  system.img_llb%s
    --  system.img_lllb%s
    --  system.img_lllw%s
+   --  system.img_llu%s
    --  system.img_llw%s
    --  system.img_uns%s
+   --  system.img_util%s
+   --  system.img_util%b
    --  system.img_wiu%s
    --  system.wch_con%s
    --  system.wch_con%b
@@ -455,6 +501,9 @@ package ada_main is
    --  system.concat_2%b
    --  system.concat_3%s
    --  system.concat_3%b
+   --  system.exn_flt%s
+   --  system.exn_lflt%s
+   --  system.exn_llf%s
    --  system.traceback%s
    --  system.traceback%b
    --  ada.characters.handling%s
@@ -538,6 +587,9 @@ package ada_main is
    --  system.fat_flt%s
    --  system.fat_lflt%s
    --  system.fat_llf%s
+   --  system.img_flt%s
+   --  system.img_lflt%s
+   --  system.img_llf%s
    --  system.put_images%s
    --  system.put_images%b
    --  ada.streams%s
@@ -562,6 +614,9 @@ package ada_main is
    --  system.stream_attributes%b
    --  ada.strings.unbounded%s
    --  ada.strings.unbounded%b
+   --  system.val_flt%s
+   --  system.val_lflt%s
+   --  system.val_llf%s
    --  system.val_lllu%s
    --  system.val_llli%s
    --  system.val_uns%s
@@ -572,6 +627,8 @@ package ada_main is
    --  ada.strings.unbounded.text_io%b
    --  ada.text_io.generic_aux%s
    --  ada.text_io.generic_aux%b
+   --  ada.float_text_io%s
+   --  ada.float_text_io%b
    --  ada.integer_text_io%s
    --  ada.integer_text_io%b
    --  ada.text_io.unbounded_io%s

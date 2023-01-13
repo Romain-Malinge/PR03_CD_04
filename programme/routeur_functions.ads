@@ -19,12 +19,13 @@ package Routeur_Functions is
 
     -- Afficher les parametres du programmes
     procedure Afficher_Parametres (Nom_Paquet : Unbounded_String;
-                                    Nom_Table : Unbounded_String;
-                                    Nom_Resultat : Unbounded_String;
-                                    Taille_Cache : Integer;
-                                    Politique : Unbounded_String;
-                                    Nbr_Ajoute : Integer;
-                                    Num_Ligne : Ada.Text_IO.Count);
+                                   Nom_Table : Unbounded_String;
+                                   Nom_Resultat : Unbounded_String;
+                                   Taille_Cache : Integer;
+                                   Politique : Unbounded_String;
+                                   Nbr_Route : Integer;
+                                   Nbr_Ajoute : Integer;
+                                   Num_Ligne : Ada.Text_IO.Count);
 
 
     -- Afficher une cellule de Lca
@@ -50,11 +51,6 @@ package Routeur_Functions is
     procedure Put_IP_Interface (Fichier : File_Type;
                                 IP : T_Adresse_IP;
                                 Port : Unbounded_String);
-
-
-    -- Supprimer des éléments dans une Lca pour lui donner une taille choisie
-    procedure Rogner (Lca : in out T_LCA_IP; Taille : in Integer) with
-            Post =>  LCA_IP.Taille (Lca) = Taille;        -- la Lca est à la taille souhaité
 
 
 end Routeur_Functions;

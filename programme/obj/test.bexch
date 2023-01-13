@@ -1,0 +1,22 @@
+[MAPPING FILE]
+C:\Users\romai\AppData\Local\Temp\GNAT-TEMP-000005.TMP
+[TOOLCHAIN VERSION]
+ada
+GNAT 2021
+[MAIN BASE NAME]
+test
+[COMPILER PATH]
+c:\gnat\2021\bin\gcc.exe
+[COMPILER LEADING SWITCHES]
+-c
+-x
+ada
+-gnatA
+[MAIN DEPENDENCY FILE]
+C:\Users\romai\Desktop\PR03_CD_04\programme\obj\test.ali
+[DEPENDENCY FILES]
+[BINDING OPTIONS]
+gnatbind_prefix=
+[PROJECT FILES]
+C:\Users\romai\Desktop\PR03_CD_04\programme\pr03.gpr
+20230113102340 f3ee593ba05c936a8f19c412614e94f4

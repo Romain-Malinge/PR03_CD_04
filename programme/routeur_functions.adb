@@ -1,5 +1,6 @@
 with Ada.Text_IO;               use Ada.Text_IO;
 with Ada.Integer_Text_IO;       use Ada.Integer_Text_IO;
+with Ada.Float_Text_IO;         use Ada.Float_Text_IO;
 with Ada.Strings.Unbounded;     use Ada.Strings.Unbounded;
 with Ada.Text_IO.Unbounded_IO;  use Ada.Text_IO.Unbounded_IO;
 with Ada.Command_Line;          use Ada.Command_Line;
@@ -49,27 +50,36 @@ package body Routeur_Functions is
 
 
     procedure Afficher_Parametres (Nom_Paquet : Unbounded_String;
-                                    Nom_Table : Unbounded_String;
-                                    Nom_Resultat : Unbounded_String;
-                                    Taille_Cache : Integer;
-                                    Politique : Unbounded_String;
-                                    Nbr_Ajoute : Integer;
-                                    Num_Ligne : Ada.Text_IO.Count) is
+                                   Nom_Table : Unbounded_String;
+                                   Nom_Resultat : Unbounded_String;
+                                   Taille_Cache : Integer;
+                                   Politique : Unbounded_String;
+                                   Nbr_Route : Integer;
+                                   Nbr_Ajoute : Integer;
+                                   Num_Ligne : Ada.Text_IO.Count) is
+        Defaut_Cache : Float;
     begin
         New_Line;
         Put_Line ("+-------------------- STATISTIQUES ligne" & Num_Ligne'Image & " ---------------------");
-        Put ("| Politique du Cache: ");
+        -- Ligne 1 des statistiques
+        Put ("| Politique du Cache:   ");
         Put (Politique);
         if not (Politique = "FIFO") then
             Put (" ");
         else
             null;
         end if;
-        Put ("      | Paquet:   ");
-        Put_Line(Nom_Paquet);
+        Put ("    | Nbr d'IP routé: "); Put (Nbr_Route, 3); New_Line;
+        -- Ligne 2 des statistiques
         Put ("| Taille du Cache:"); Put (Taille_Cache, 4);
+        Put ("          | Paquet:   ");
+        Put_Line(Nom_Paquet);
+        -- Ligne 3 des statistiques
+        Put ("| Ajout au Cache: "); Put (Nbr_Ajoute, 4);
         Put ("          | Table:    "); Put_Line(Nom_Table);
-        Put ("| Nbr d'ajout au Cache:"); Put (Nbr_Ajoute, 3);
+        -- Ligne 4 des statistiques
+        Defaut_Cache := Float(Nbr_Ajoute)/Float(Nbr_Route) * 100.0;
+        Put ("| Defaut de cache: "); Put(Defaut_Cache, 3,0,0); Put(" %");
         Put ("      | Résultat: "); Put_Line(Nom_Resultat);
         Put_Line ("+---------------------------------------------------------------");
     end Afficher_Parametres;
@@ -143,14 +153,6 @@ package body Routeur_Functions is
         Put (Fichier, Port);
         New_Line (Fichier);
     end Put_IP_Interface;
-
-
-    procedure Rogner (Lca : in out T_LCA_IP; Taille : in Integer) is
-    begin
-        while LCA_IP.Taille(Lca) > Taille loop
-            LCA_IP.Supprimer_Premier(Lca);
-        end loop;
-    end Rogner;
 
 
 end Routeur_Functions;

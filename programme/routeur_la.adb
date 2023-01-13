@@ -42,6 +42,7 @@ procedure routeur_la is
     Politique : Unbounded_String;     -- La politique du cache
     Fin : Boolean;                    -- La variable qui indique la fin du programme
     Bavard : Boolean;                 -- Indique si l'utilisateur demande les statistiques
+    Nbr_Route : Integer;              -- Le nombre d'IP routé
     Nbr_Ajoute : Integer;             -- Le nombre de route ajouté au cache
     
     
@@ -100,6 +101,7 @@ begin
     Fin := False;
     A_Sprimmer := 0;
     Grand_Masque := 0;
+    Nbr_Route := 0;
     Nbr_Ajoute := 0;
     
     
@@ -190,7 +192,7 @@ begin
         if Length(Ligne)=0 then
             null;
         elsif Ligne = +"stat" then
-            Afficher_Parametres (Nom_Paquet, Nom_Table, Nom_Resultat, Taille_Cache, Politique, Nbr_Ajoute, Num_Ligne);
+            Afficher_Parametres (Nom_Paquet, Nom_Table, Nom_Resultat, Taille_Cache, Politique, Nbr_Route, Nbr_Ajoute, Num_Ligne);
         elsif Ligne = +"table" then
             Afficher_Lca_Titre (Table, +"TABLE", Num_Ligne);
         elsif Ligne = +"cache" then
@@ -205,8 +207,9 @@ begin
             New_Line;
             Put_Line ("FIN ligne" & Num_Ligne'Image);
             
-            -- Router une Adresse IP
+        -- Router une Adresse IP
         elsif To_String(Ligne)(1) in '0'..'9' then
+            Nbr_Route := Nbr_Route+ 1;
             IP := 0;
             Masque := 0;
             Port := +"";
@@ -277,7 +280,7 @@ begin
     Close (F_Paquet);
     Close (F_Resultat);
     if Bavard then
-        Afficher_Parametres (Nom_Paquet, Nom_Table, Nom_Resultat, Taille_Cache, Politique, Nbr_Ajoute, Num_Ligne);
+        Afficher_Parametres (Nom_Paquet, Nom_Table, Nom_Resultat, Taille_Cache, Politique, Nbr_Route, Nbr_Ajoute, Num_Ligne);
     else
         null;
     end if;

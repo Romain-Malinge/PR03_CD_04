@@ -37,7 +37,8 @@ procedure routeur_ll is
     Politique : Unbounded_String;     -- La politique du cache
     Fin : Boolean;                    -- La variable qui indique la fin du programme
     Bavard : Boolean;                 -- Indique si l'utilisateur demande les statistiques
-    Nbr_Ajoute : Integer;             -- Le nombre de route ajout\u00e9es au cache
+    Nbr_Route : Integer;              -- Le nombre d'IP routé
+    Nbr_Ajoute : Integer;             -- Le nombre de route ajoutées au cache
     
     
     ------------------------------- PROCEDURES ---------------------------------
@@ -93,6 +94,7 @@ begin
     Politique := +"FIFO";
     Bavard := True;
     Fin := False;
+    Nbr_Route := 0;
     Nbr_Ajoute := 0;
     
     
@@ -183,7 +185,7 @@ begin
         if Length(Ligne)=0 then
             null;
         elsif Ligne = +"stat" then
-            Afficher_Parametres (Nom_Paquet, Nom_Table, Nom_Resultat, Taille_Cache, Politique, Nbr_Ajoute, Num_Ligne);
+            Afficher_Parametres (Nom_Paquet, Nom_Table, Nom_Resultat, Taille_Cache, Politique, Nbr_Route, Nbr_Ajoute, Num_Ligne);
         elsif Ligne = +"table" then
             Afficher_Lca_Titre (Table, +"TABLE", Num_Ligne);
         elsif Ligne = +"cache" then
@@ -195,6 +197,7 @@ begin
             
         -- Router une Adresse IP
         elsif To_String(Ligne)(1) in '0'..'9' then
+            Nbr_Route := Nbr_Route+ 1;
             IP := 0;
             Masque := 0;
             Port := +"";
@@ -212,8 +215,10 @@ begin
                 -- Supprimer le plus bas Rang si la taille est trop grande
                 if Politique = +"LFU" and Taille(Cache) > Taille_Cache then
                     Supprimer_LFU (Cache, IP and Grand_Masque);
-                else 
-                    Rogner (Cache, Taille_Cache);  -- Pour les cas FIFO et LRU
+                elsif Taille(Cache) > Taille_Cache then
+                    Supprimer_Premier(Cache);  -- Pour les cas FIFO et LRU
+                else
+                    null;
                 end if;
                 
             -- Le cache a routé l'IP
@@ -247,7 +252,7 @@ begin
     Close (F_Paquet);
     Close (F_Resultat);
     if Bavard then
-        Afficher_Parametres (Nom_Paquet, Nom_Table, Nom_Resultat, Taille_Cache, Politique, Nbr_Ajoute, Num_Ligne);
+        Afficher_Parametres (Nom_Paquet, Nom_Table, Nom_Resultat, Taille_Cache, Politique, Nbr_Route, Nbr_Ajoute, Num_Ligne);
     else
         null;
     end if;
