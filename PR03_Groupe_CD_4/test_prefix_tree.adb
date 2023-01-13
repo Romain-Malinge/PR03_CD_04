@@ -58,7 +58,7 @@ begin
     Avancement := 0;
     -- Selon la logique de conception, cela ne devrait pousser aucune feuille et créer une feuille à gauche de la racine
     Enregistrer(Arbre, IP, Masque, Port, 3, 0 , Avancement);
-    Put_Line("Apès ajout des 3 feuilles");
+    Put_Line("Après ajout des 3 feuilles");
     Afficher_Arbre(Arbre);
     
     -- On rafraichit le masque, le rang et la fréquence de la 3ème feuille 
@@ -66,7 +66,7 @@ begin
     Set_IP(Masque, 255, 255, 0, 0);
     Enregistrer(Arbre, IP, Masque, Port, 3, 1, Avancement);
     
-    Put_Line("Apès actualisation de eth1");
+    Put_Line("Après actualisation de eth1");
     Afficher_Arbre(Arbre);
     
     -- Teste de la fonction Taille 
@@ -80,7 +80,7 @@ begin
     Min := 10;
     Least_ranked (Arbre, IP, Min);
     pragma Assert (Min = 1);
-    Put_Line("La feuille de plus petit rang vaut est celle de eth3");
+    Put_Line("La feuille de plus petit rang vaut" & Min'Image &" c'est celle contenant l'interface eth3");
     Supprimer_Destination (Arbre, IP);
     Put_Line("Après supprétion de eth3");
     Afficher_Arbre (Arbre);

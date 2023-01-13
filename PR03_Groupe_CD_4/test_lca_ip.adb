@@ -104,7 +104,7 @@ procedure Test_Lca_IP is
         New_Line;
         Put_Line("----------------- Test fonction supprimer -----------------");
         Supprimer(Lca, Tab_Dest(3));
-        Put_Line ("Après supprtion de la fréquence la plus basse");
+        Put_Line ("Après suppression de la fréquence la plus basse");
         Afficher_Lca(Lca);
     end Tester_Supprimer;
 
@@ -114,7 +114,7 @@ procedure Test_Lca_IP is
         New_Line;
         Put_Line("------------- Test fonction supprimer_premier -------------");
         Supprimer_Premier(Lca);
-        Put_Line ("Après supprtion du premier");
+        Put_Line ("Après suppression du premier");
         pragma Assert( Taille(Lca) = 4);
         Afficher_Lca(Lca);
     end Tester_Supprimer_1er;

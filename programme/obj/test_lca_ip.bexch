@@ -1,0 +1,23 @@
+[GENERATED OBJECT FILE]
+b__test_lca_ip.o
+[PROJECT FILES]
+C:\Users\julie\OneDrive\Bureau\Utilitaires\N7\Cours N7\PIM\Projet PIM\PR03_CD_04\programme\pr03.gpr
+20230113165314 09dd2399faebed68d2a9a255082b903d
+[BOUND OBJECT FILES]
+C:\Users\julie\OneDrive\Bureau\Utilitaires\N7\Cours N7\PIM\Projet PIM\PR03_CD_04\programme\obj\routeur_exceptions.o
+C:\Users\julie\OneDrive\Bureau\Utilitaires\N7\Cours N7\PIM\Projet PIM\PR03_CD_04\programme\obj\lca_ip.o
+C:\Users\julie\OneDrive\Bureau\Utilitaires\N7\Cours N7\PIM\Projet PIM\PR03_CD_04\programme\obj\routeur_functions.o
+C:\Users\julie\OneDrive\Bureau\Utilitaires\N7\Cours N7\PIM\Projet PIM\PR03_CD_04\programme\obj\prefix_tree.o
+C:\Users\julie\OneDrive\Bureau\Utilitaires\N7\Cours N7\PIM\Projet PIM\PR03_CD_04\programme\obj\test_lca_ip.o
+[GENERATED SOURCE FILES]
+b__test_lca_ip.ads
+b__test_lca_ip.adb
+b__test_lca_ip.ali
+[RESULTING OPTIONS]
+-LC:\Users\julie\OneDrive\Bureau\Utilitaires\N7\Cours N7\PIM\Projet PIM\PR03_CD_04\programme\obj\
+-LC:\Users\julie\OneDrive\Bureau\Utilitaires\N7\Cours N7\PIM\Projet PIM\PR03_CD_04\programme\obj\
+-LC:/gnat/2021/lib/gcc/x86_64-w64-mingw32/10.3.1/adalib/
+-static
+-static-libgcc
+C:/gnat/2021/lib/gcc/x86_64-w64-mingw32/10.3.1/adalib/libgnat.a
+-Wl,--stack=0x2000000
