@@ -26,9 +26,6 @@ SOMMAIRE:  1\  Liste des fichier dans PR03_Groupe_CD_4
  - routeur_exceptions.ads : interface du module routeur_exceptions qui regroupe les exceptions
 possibles lors de l'utilisation du routeur
 
- - paquet.txt : fichier texte par defaut regroupant les paquets à envoyer grâce à la table de routage
- - table.txt : fichier texte au sein duquel il y a la table de routage
-
  - test_functions.adb : le programme de teste des fonctions utiles pour router les IP
  - test_functions.adb : le programme de teste du module Lca_IP
  - test_functions.adb : le programme de teste du module Prefix_Tree
