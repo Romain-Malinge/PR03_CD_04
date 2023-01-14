@@ -44,8 +44,8 @@ package body Routeur_Functions is
         Put("| ");
         Put_IP(D); Put("     ");
         Put_IP(M); Put("     ");
-        Put(P); Put("        ");
-        Put_Line(F'Image);
+        Put(F,3); Put("          ");
+        Put_Line(P);
     end Afficher_Cellule;
 
 

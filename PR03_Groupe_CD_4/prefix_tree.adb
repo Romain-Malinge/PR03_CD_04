@@ -1,4 +1,5 @@
 with Ada.Text_IO;                 use Ada.Text_IO;
+with Ada.Integer_Text_IO;         use Ada.Integer_Text_IO;
 with Ada.Strings.Unbounded;       use Ada.Strings.Unbounded;
 with Routeur_Exceptions;          use Routeur_Exceptions;
 with Ada.Unchecked_Deallocation;
@@ -35,8 +36,8 @@ package body Prefix_Tree is
                 Put("| ");
                 Put_IP(Arbre.all.Destination); Put("     ");
                 Put_IP(Arbre.all.Masque); Put("     ");
-                Put(To_String(Arbre.all.Port)); Put("        ");
-                Put_Line(Arbre.all.Frequence'Image);
+                Put(Arbre.all.Frequence,3); Put("          ");
+                Put_line(To_String(Arbre.all.Port));
             else
                 null;
             end if;

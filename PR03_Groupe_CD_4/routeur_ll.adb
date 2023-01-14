@@ -59,7 +59,7 @@ procedure routeur_ll is
     begin
         New_Line;
         Put_Line ("+----------------------- " & Titre & " ligne" & Num_Ligne'Image & " -------------------------");
-        Put_line ("| Destination         Masque              Interface    Fréquence");
+        Put_line ("| Destination         Masque              Fréquence    Interface");
         Put_Line("|");
         Afficher_Lca (Lca);
         Put_Line ("+---------------------------------------------------------------");
@@ -110,6 +110,7 @@ begin
                     when CONSTRAINT_ERROR => raise Cache_Exception;
                 end;
             when 'P' => Politique := +Argument(arg+1);
+            when 's' => Bavard := True;
             when 'S' => Bavard := False;
             when 'p' => Nom_Paquet := +Argument(arg+1);
             when 't' => Nom_Table := +Argument(arg+1);
@@ -224,13 +225,11 @@ begin
             -- Le cache a routé l'IP
             else
                 if Politique = +"LRU" then
-                    Grand_Masque := Masque;
-                    Trouver_Grand_Masque(Table, IP, Destination, Grand_Masque);
-                    Supprimer (Cache, IP and Grand_Masque);
+                    Supprimer (Cache, IP and Masque);
                 else
                     null;
                 end if;
-                Enregistrer (Cache, IP and Grand_Masque, Grand_Masque, Port, Frequence + 1);
+                Enregistrer (Cache, IP and Masque, Masque, Port, Frequence + 1);
             end if;
             
             Put_IP_Interface (F_Resultat, IP, Port);    -- Modifier le fichier resultat
