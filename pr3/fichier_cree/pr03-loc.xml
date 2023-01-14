@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<Locations >
+  <Project>
+    <vfs_file>C:\Users\romai\Desktop\PR03_CD_04\PR03_Groupe_CD_4\pr03.gpr</vfs_file>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project>C:\Users\romai\Desktop\PR03_CD_04\PR03_Groupe_CD_4\pr03.gpr</vfs_project>
+      <vfs_file>C:\Users\romai\Desktop\PR03_CD_04\PR03_Groupe_CD_4\routeur_functions.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project />
+      <vfs_file>C:\Users\romai\Desktop\PR03_CD_04\PR03_Groupe_CD_4\lca_ip.ads</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project>C:\Users\romai\Desktop\PR03_CD_04\PR03_Groupe_CD_4\pr03.gpr</vfs_project>
+      <vfs_file>C:\Users\romai\Desktop\PR03_CD_04\PR03_Groupe_CD_4\routeur_la.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project>C:\Users\romai\Desktop\PR03_CD_04\PR03_Groupe_CD_4\pr03.gpr</vfs_project>
+      <vfs_file>C:\Users\romai\Desktop\PR03_CD_04\PR03_Groupe_CD_4\routeur_ll.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 73" line=" 58" >
+      <vfs_project>C:\Users\romai\Desktop\PR03_CD_04\PR03_Groupe_CD_4\pr03.gpr</vfs_project>
+      <vfs_file>C:\Users\romai\Desktop\PR03_CD_04\PR03_Groupe_CD_4\routeur_ll.adb</vfs_file>
+    </file_marker>
+    <file_marker current="true" column=" 1" line=" 1" >
+      <vfs_project>C:\Users\romai\Desktop\PR03_CD_04\PR03_Groupe_CD_4\pr03.gpr</vfs_project>
+      <vfs_file>C:\Users\romai\Desktop\PR03_CD_04\PR03_Groupe_CD_4\routeur_functions.adb</vfs_file>
+    </file_marker>
+  </Project>
+</Locations>
