@@ -117,6 +117,7 @@ begin
                     when CONSTRAINT_ERROR => raise Cache_Exception;
                 end;
             when 'P' => Politique := +Argument(arg+1);
+            when 's' => Bavard := True;
             when 'S' => Bavard := False;
             when 'p' => Nom_Paquet := +Argument(arg+1);
             when 't' => Nom_Table := +Argument(arg+1);

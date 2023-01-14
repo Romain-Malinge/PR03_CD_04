@@ -42,8 +42,12 @@ procedure Test_Lca_IP is
     Tab_Dest : array (1..Nb_IP) of T_Adresse_IP;
     Tab_Masques : array (1..Nb_IP) of T_Adresse_IP;
     Tab_Port : constant array (1..Nb_IP) of Unbounded_String := (+"eth1", +"eth2", +"eth3", +"eth4", +"eth5");
-    Tab_Freq : constant array (1..Nb_IP) of Integer := (1,3,4,6,13);
+    Tab_Freq : constant array (1..Nb_IP) of Integer := (1,3,4,2,13);
 
+    ------Variable test trouver_grand_masque--------
+    IP_ajouter : T_Adresse_IP;
+    Destination: T_Adresse_IP;
+    Grand_Masque: T_Adresse_IP;
 
     -------------------------- Definition des Test -----------------------------
 
@@ -80,33 +84,33 @@ procedure Test_Lca_IP is
         New_Line;
         for I in 1..Nb_IP loop
             Enregistrer (Lca, Tab_Dest(I), Tab_Masques(I), Tab_Port(I), Tab_Freq(I));
-            Put_Line ("Après insertion du quadruplet" & I'Image & " dans la Lca");
+            Put_Line ("AprÃ¨s insertion du quadruplet" & I'Image & " dans la Lca");
             Afficher_Lca(Lca);
             New_Line;
             -- Test l'enregistrement
             pragma Assert (not Est_Vide (Lca));
             pragma Assert (Taille (Lca) = I);
-            pragma Assert (Destination_Presente (Lca, Tab_Dest(I)));  --test Destination_Pésente
+            pragma Assert (Destination_Presente (Lca, Tab_Dest(I)));  --test Destination_PÃ©sente
         end loop;
 
         pragma Assert ( La_Frequence_Premier(Lca) = 1); -- Test La_Frequence_Premier
 
-        -- Test remplacement si une destination et son masque sont deja présents
+        -- Test remplacement si une destination et son masque sont deja prÃ©sents
         Enregistrer(Lca, Tab_Dest(1), Tab_Masques(1), Tab_Port(1), Tab_Freq(1)+5);
         pragma Assert (La_Frequence_Premier(Lca) = 6);
-        Put_Line ("Après mofification de la première fréquence");
+        Put_Line ("AprÃ¨s mofification de la premiÃ¨re frÃ©quence");
         Afficher_Lca(Lca);
     end Tester_Enregistrer;
 
 
-    procedure Tester_Supprimer (Lca : in out T_LCA_IP) is
+    procedure Tester_Supprimer_LFU (Lca : in out T_LCA_IP) is
     begin
         New_Line;
-        Put_Line("----------------- Test fonction supprimer -----------------");
-        Supprimer(Lca, Tab_Dest(3));
-        Put_Line ("Après suppression de la fréquence la plus basse");
+        Put_Line("--------------- Test fonction supprimer_LFU ---------------");
+        Supprimer_LFU(Lca, Dest5);
+        Put_Line ("AprÃ¨s suppression de la frÃ©quence la plus basse");
         Afficher_Lca(Lca);
-    end Tester_Supprimer;
+    end Tester_Supprimer_LFU;
 
 
     procedure Tester_Supprimer_1er (Lca : in out T_LCA_IP) is
@@ -114,7 +118,7 @@ procedure Test_Lca_IP is
         New_Line;
         Put_Line("------------- Test fonction supprimer_premier -------------");
         Supprimer_Premier(Lca);
-        Put_Line ("Après suppression du premier");
+        Put_Line ("AprÃ¨s suppression du premier element");
         pragma Assert( Taille(Lca) = 4);
         Afficher_Lca(Lca);
     end Tester_Supprimer_1er;
@@ -126,15 +130,32 @@ procedure Test_Lca_IP is
         pragma Assert (Est_Vide(Lca));
     end Tester_Vider;
 
+    procedure Tester_Trouver_Grand_Masque(Lca : in out T_LCA_IP) is
 
---------------------------- Effectuer les tests -----------------------------
+    begin
+        New_Line;
+        Put_Line("-------- Test fonction Tester_Trouver_Grand_Masque --------");
+        Set_IP(IP_ajouter, 128, 255, 128, 0);
+        Set_IP(Grand_Masque, 0, 0, 0, 0);
+        Destination := Dest2;
+        Trouver_Grand_Masque(Lca,Destination,IP_ajouter, Grand_Masque);
+        Put("Le masque à utiliser pour enregistrer l'IP ");
+        Put_IP(IP_ajouter); New_Line;
+        Put("dans le cache serait : ");
+        Put_IP(Grand_Masque);
+        New_Line;
+        pragma Assert( Grand_Masque = Masque3);
+    end Tester_Trouver_Grand_Masque;
+
+    --------------------------- Effectuer les tests -----------------------------
 begin
     New_Line;
     Put_Line("----------------------- Test Lca_IP -----------------------");
     Tester_Initialiser(Lca);
     Tester_Enregistrer(Lca); -- Teste les fonctions Enregistrer La_Frequence_Premier Destination_Presente
-    Tester_Supprimer(Lca);
+    Tester_Supprimer_LFU(Lca);
     Tester_Supprimer_1er(Lca);
+    Tester_Trouver_Grand_Masque(Lca);
     Tester_Vider(Lca);
     New_Line;
     Put_Line ("Fin des tests : OK");
