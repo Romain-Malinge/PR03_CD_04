@@ -46,8 +46,7 @@ package Prefix_Tree is
                            Port : in Unbounded_String; 
                            Rang : in Integer;
                            Frequence : in Integer;
-                           Avancement : in out Integer) with
-    Pre => Avancement = 0;
+                           Avancement : in out Integer);
    
     
     -- Chercher les informations de la feuille avec le plus petit rang

@@ -1,4 +1,3 @@
-with Ada.Text_IO;            use Ada.Text_IO;
 with Routeur_Exceptions;     use Routeur_Exceptions;
 with Ada.Unchecked_Deallocation;
 
@@ -48,7 +47,7 @@ package body LCA_IP is
     begin
         if Est_Vide(Lca) then
             null;
-        elsif (Lca.all.Destination and Grand_Masque) = (IP and Grand_Masque) and Grand_Masque < Lca.all.Masque then
+        elsif (Lca.all.Destination and Grand_Masque) = (IP and Grand_Masque) and Grand_Masque <= Lca.all.Masque then
             Grand_Masque := Lca.all.Masque;
             Trouver_Grand_Masque (Lca.all.Suivant, Destination, IP, Grand_Masque);
         else

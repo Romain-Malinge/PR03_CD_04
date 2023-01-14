@@ -1,13 +1,11 @@
 with Ada.Strings;                use Ada.Strings;
 with Ada.Text_IO;                use Ada.Text_IO;
-with Ada.Integer_Text_IO;        use Ada.Integer_Text_IO;
 with Ada.Strings.Unbounded;      use Ada.Strings.Unbounded;
 with Ada.Text_IO.Unbounded_IO;   use Ada.Text_IO.Unbounded_IO;
 with Ada.Command_Line;           use Ada.Command_Line;
-with Ada.Exceptions;             use Ada.Exceptions;
-with Ada.IO_Exceptions;          use Ada.IO_Exceptions;
 with LCA_IP;                     use LCA_IP;
 with Prefix_Tree;                use Prefix_Tree;
+with Ada.IO_Exceptions;
 with Routeur_Exceptions;         use Routeur_Exceptions;
 with Routeur_Functions;          use Routeur_Functions;
 
@@ -15,8 +13,6 @@ with Routeur_Functions;          use Routeur_Functions;
 procedure routeur_la is
     
     --------------------------------- VARIABLES --------------------------------
-    
-    UN_OCTET : constant T_Adresse_IP := 2 ** 8;
     
     Nom_Table : Unbounded_String;     -- Le nom du fichier contenant la table
     Nom_Paquet : Unbounded_String;    -- Le nom du fichier contenant les paquets

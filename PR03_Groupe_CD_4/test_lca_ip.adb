@@ -1,14 +1,7 @@
 with Ada.Strings;               use Ada.Strings;
 with Ada.Text_IO;               use Ada.Text_IO;
-with Ada.Integer_Text_IO;       use Ada.Integer_Text_IO;
 with Ada.Strings.Unbounded;     use Ada.Strings.Unbounded;
-with Ada.Text_IO.Unbounded_IO;  use Ada.Text_IO.Unbounded_IO;
-with Ada.Command_Line;          use Ada.Command_Line;
-with Ada.Exceptions;            use Ada.Exceptions;
-with Ada.IO_Exceptions;         use Ada.IO_Exceptions;
 with LCA_IP;                    use LCA_IP;
-with Prefix_Tree;               use Prefix_Tree;
-with Routeur_Exceptions;        use Routeur_Exceptions;
 with Routeur_Functions;         use Routeur_Functions;
 
 
@@ -67,7 +60,7 @@ procedure Test_Lca_IP is
         -- Initialisation des destinitaions
         Set_IP(Dest1, 255, 196, 255, 0);
         Set_IP(Dest2, 128, 255, 0, 0);
-        Set_IP(Dest3, 128, 128, 0, 0);
+        Set_IP(Dest3, 128, 0, 0, 0);
         Set_IP(Dest4, 196, 0, 0, 0);
         Set_IP(Dest5, 0, 0, 0, 0);
         Tab_Dest := (Dest1, Dest2, Dest3, Dest4, Dest5);
@@ -75,7 +68,7 @@ procedure Test_Lca_IP is
         -- Initialisation des masques
         Set_IP(Masque1, 255, 255, 255, 0);
         Set_IP(Masque2, 255, 255, 0, 0);
-        Set_IP(Masque3, 255, 255, 0, 0);
+        Set_IP(Masque3, 255, 0, 0, 0);
         Set_IP(Masque4, 255, 0, 0, 0);
         Set_IP(Masque5, 0, 0, 0, 0);
         Tab_Masques := (Masque1, Masque2, Masque3, Masque4, Masque5);
@@ -119,8 +112,8 @@ procedure Test_Lca_IP is
         Put_Line("------------- Test fonction supprimer_premier -------------");
         Supprimer_Premier(Lca);
         Put_Line ("AprÃ¨s suppression du premier element");
-        pragma Assert( Taille(Lca) = 4);
         Afficher_Lca(Lca);
+        pragma Assert( Taille(Lca) = 3);
     end Tester_Supprimer_1er;
 
 
@@ -135,16 +128,17 @@ procedure Test_Lca_IP is
     begin
         New_Line;
         Put_Line("-------- Test fonction Tester_Trouver_Grand_Masque --------");
-        Set_IP(IP_ajouter, 128, 255, 128, 0);
+        Set_IP(IP_ajouter, 128, 124, 128, 0);
         Set_IP(Grand_Masque, 0, 0, 0, 0);
         Destination := Dest2;
         Trouver_Grand_Masque(Lca,Destination,IP_ajouter, Grand_Masque);
         Put("Le masque à utiliser pour enregistrer l'IP ");
         Put_IP(IP_ajouter); New_Line;
         Put("dans le cache serait : ");
+        pragma Assert(Grand_Masque = Masque2);
         Put_IP(Grand_Masque);
         New_Line;
-        pragma Assert( Grand_Masque = Masque3);
+
     end Tester_Trouver_Grand_Masque;
 
     --------------------------- Effectuer les tests -----------------------------

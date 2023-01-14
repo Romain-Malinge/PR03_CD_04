@@ -1,11 +1,9 @@
-with Ada.Strings;               use Ada.Strings;	-- pour Both utilisÃ© par Trim
+with Ada.Strings;               use Ada.Strings;
 with Ada.Text_IO;               use Ada.Text_IO;
-with Ada.Integer_Text_IO;       use Ada.Integer_Text_IO;
 with Ada.Strings.Unbounded;     use Ada.Strings.Unbounded;
 with Ada.Text_IO.Unbounded_IO;  use Ada.Text_IO.Unbounded_IO;
 with Ada.Command_Line;          use Ada.Command_Line;
-with Ada.Exceptions;            use Ada.Exceptions;	-- pour Exception_Message
-with Ada.IO_Exceptions;         use Ada.IO_Exceptions;
+with Ada.IO_Exceptions;
 with LCA_IP;                    use LCA_IP;
 with Routeur_Exceptions;        use Routeur_Exceptions;
 with Routeur_Functions;         use Routeur_Functions;
@@ -14,8 +12,6 @@ with Routeur_Functions;         use Routeur_Functions;
 procedure routeur_ll is
     
     --------------------------------- VARIABLES --------------------------------
-    
-    UN_OCTET : constant T_Adresse_IP := 2 ** 8;
     
     Nom_Table : Unbounded_String;     -- Le nom du fichier contenant la table
     Nom_Paquet : Unbounded_String;    -- Le nom du fichier contenant les paquets
@@ -71,7 +67,7 @@ procedure routeur_ll is
                                 P : in out Unbounded_String;
                                 F : in out Integer) is
     begin
-        if ((IP and M) = D) and M > Masque then
+        if ((IP and M) = D) and M >= Masque then
             Destination := D;
             Masque := M;
             Port := P;

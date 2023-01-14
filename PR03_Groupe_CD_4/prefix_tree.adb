@@ -1,7 +1,5 @@
 with Ada.Text_IO;                 use Ada.Text_IO;
 with Ada.Integer_Text_IO;         use Ada.Integer_Text_IO;
-with Ada.Strings.Unbounded;       use Ada.Strings.Unbounded;
-with Routeur_Exceptions;          use Routeur_Exceptions;
 with Ada.Unchecked_Deallocation;
 with Routeur_Functions;           use Routeur_Functions;
 
@@ -69,7 +67,7 @@ package body Prefix_Tree is
     begin
         if Est_Vide (Arbre) then
             null;
-        elsif Arbre.all.Feuille and ((IP and Arbre.all.Masque) = Arbre.all.Destination) and Masque < Arbre.all.Masque then
+        elsif Arbre.all.Feuille and ((IP and Arbre.all.Masque) = Arbre.all.Destination) and Masque <= Arbre.all.Masque then
             Destination := Arbre.all.Destination;
             Masque := Arbre.all.Masque;
             Port := Arbre.all.Port;

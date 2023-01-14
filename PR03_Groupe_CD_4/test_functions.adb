@@ -1,6 +1,4 @@
-with Prefix_Tree;           use Prefix_Tree;
 with Ada.Text_IO;           use Ada.Text_IO;
-with Ada.Integer_Text_IO;   use Ada.Integer_Text_IO;
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with Routeur_Functions;     use Routeur_Functions;
 with LCA_IP;                use LCA_IP;
@@ -23,15 +21,15 @@ procedure Test_Functions is
         -- Teste pour une IP quelconque
         Set_IP(IP, 56, 132, 251, 189);
         pragma assert (Natural ((IP / UN_OCTET ** 3) mod UN_OCTET) = 56);
-        pragma assert (Natural ((IP / UN_OCTET ** 3) mod UN_OCTET) = 132);
-        pragma assert (Natural ((IP / UN_OCTET ** 3) mod UN_OCTET) = 251);
+        pragma assert (Natural ((IP / UN_OCTET ** 2) mod UN_OCTET) = 132);
+        pragma assert (Natural ((IP / UN_OCTET ** 1) mod UN_OCTET) = 251);
         pragma assert (Natural (IP mod UN_OCTET) = 189);
         -- Teste pour un Masque quelconque
         Set_IP(IP, 255, 255, 255, 0);
-        pragma assert (Natural ((IP / UN_OCTET ** 3) mod UN_OCTET) = 0);
         pragma assert (Natural ((IP / UN_OCTET ** 3) mod UN_OCTET) = 255);
-        pragma assert (Natural ((IP / UN_OCTET ** 3) mod UN_OCTET) = 255);
-        pragma assert (Natural (IP mod UN_OCTET) = 255);
+        pragma assert (Natural ((IP / UN_OCTET ** 2) mod UN_OCTET) = 255);
+        pragma assert (Natural ((IP / UN_OCTET ** 1) mod UN_OCTET) = 255);
+        pragma assert (Natural (IP mod UN_OCTET) = 0);
     end Tester_Set_IP;
 
 

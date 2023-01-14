@@ -1,11 +1,6 @@
-with Ada.Text_IO;               use Ada.Text_IO;
 with Ada.Integer_Text_IO;       use Ada.Integer_Text_IO;
 with Ada.Float_Text_IO;         use Ada.Float_Text_IO;
-with Ada.Strings.Unbounded;     use Ada.Strings.Unbounded;
 with Ada.Text_IO.Unbounded_IO;  use Ada.Text_IO.Unbounded_IO;
-with Ada.Command_Line;          use Ada.Command_Line;
-with Ada.Exceptions;            use Ada.Exceptions;
-with LCA_IP;                    use LCA_IP;
 with Routeur_Exceptions;        use Routeur_Exceptions;
 
 
@@ -14,11 +9,11 @@ package body Routeur_Functions is
     UN_OCTET : constant T_Adresse_IP := 2 ** 8;
 
 
-    procedure Set_IP (IP : in out LCA_IP.T_Adresse_IP;
-                      N1 : in LCA_IP.T_Adresse_IP;
-                      N2 : in LCA_IP.T_Adresse_IP;
-                      N3 : in LCA_IP.T_Adresse_IP;
-                      N4 : in LCA_IP.T_Adresse_IP) is
+    procedure Set_IP (IP : in out T_Adresse_IP;
+                      N1 : in T_Adresse_IP;
+                      N2 : in T_Adresse_IP;
+                      N3 : in T_Adresse_IP;
+                      N4 : in T_Adresse_IP) is
     begin
         IP := N1;
         IP := IP * UN_OCTET + N2;
@@ -36,8 +31,13 @@ package body Routeur_Functions is
     end Put_IP;
 
 
-    procedure Afficher_Cellule (D : in out LCA_IP.T_Adresse_IP;
-                                M : in out LCA_IP.T_Adresse_IP;
+    -- Le format des fonctions pour utiliser la fonction Pour_Chaque impose que
+    -- les variables soient en in out, ce qui n'est pas le cas pour Afficher
+    pragma Warnings (Off, "formal parameter ""D"" is not modified");
+    pragma Warnings (Off, "formal parameter ""M"" is not modified");
+    pragma Warnings (Off, "formal parameter ""F"" is not modified");
+    procedure Afficher_Cellule (D : in out T_Adresse_IP;
+                                M : in out T_Adresse_IP;
                                 P : in out Unbounded_String;
                                 F : in out Integer) is
     begin
