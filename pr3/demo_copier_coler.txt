@@ -1,0 +1,27 @@
+1 - cas de base
+Dire que tout s'affiche bien que la fin marche et que
+le fichier resultat est bien comme il faut
+
+.\fichier_cree\routeur_ll -t .\fichier_exemple\table_cas_simple.txt -p .\fichier_exemple\paquet_cas_simple.txt -S
+
+
+
+2 - Politique
+Dire que la taille du cache est a 3
+Dire que on ajoute eth4 après avoir utiliser eth 1 2 3
+Et que selon la politique le eth qui part est differant
+
+.\fichier_cree\routeur_la -t .\fichier_exemple\table_teste_politique.txt -p .\fichier_exemple\paquet_teste_politique.txt -c 3 -S -P [POLITIQUE]
+
+
+
+3 - Choérence du cache 
+Bien montrer que les trois "groupe de destination" ont
+des masque de taille adapté et que les 99 sont reporté dans 
+le cache pour eviter les erreurs de routage
+
+.\fichier_cree\routeur_ll -t .\fichier_exemple\table_tailles_masques.txt -p .\fichier_exemple\paquet_tailles_masques.txt -S
+
+
+
+4 - Mdr
